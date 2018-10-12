@@ -9,13 +9,15 @@ import ratios
 import subprocess
 rand = TRandom3()
 
-## no change
+
+## Initialization
 muon = False
 resolution = True
 if muon:
 	from muonResolution import getResolution
 else:
 	from electronResolution import getResolution
+
 
 ## efficiency map
 weightHistMu = TFile("rootfiles/effMapMuons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
@@ -59,6 +61,7 @@ def getMassHisto(fileName):
 	for entry in xsecTree:
 		xsec = entry.crossSec
 	result = TH1F("h_%s"%fileName,"h_%s"%fileName,240,0,12000)
+
 	for ev in tree:
 		mass = tree.GetLeaf("bosonP4/mass").GetValue()
 		weight = 1.
@@ -130,7 +133,7 @@ def getMassDistroDY():
 
 
 # write datacards based on
-# sigYield = ADD + DY
+# sigYield = ADD - DY
 # dyYield = DY event yield only
 def writeDatacard(sigYield, dyYield, lambdaT):
 	
@@ -141,7 +144,8 @@ def writeDatacard(sigYield, dyYield, lambdaT):
 	return fname
 
 
-# execute datacard, not valid yet
+# execute datacards
+# and move them to /dataCards
 def executeDatacard(fname, lambdaT):
 
 	combine_command = "combine -M AsymptoticLimits %s -m %d"%(fname, lambdaT)
@@ -160,6 +164,7 @@ def executeDatacard(fname, lambdaT):
 
 
 # plot invariant mass spectrum for a single lambdaT
+# write datacards, and execute datacards
 def main():
 
 	lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
@@ -167,7 +172,7 @@ def main():
 	signalHists = []
 
 	# read in histograms
-	# and scale (1/binwidth)	
+	# and scale by (1/binwidth)	
 	for lambdaT in lambdas:
 		signalHist = getMassDistroSignal(str(lambdaT), lambdaT)
 		signalHist.Scale(0.02)
@@ -179,9 +184,9 @@ def main():
 	# read event yield from mass spectrum
 	# above a minimum mass Mmin
 	Mmin = 2800
-	dyNum = 0
-	sigNum = [0]*len(lambdas)
-	bw = dyHist.GetBinWidth(1)
+	dyNum = 0                    # DY yield
+	sigNum = [0]*len(lambdas)    # signal yields for lambdas
+	bw = dyHist.GetBinWidth(1)   # binwidth = 50 GeV
 
 	for bini in range(1, dyHist.GetSize()-1):
 		if (dyHist.GetBinCenter(bini) < Mmin):
