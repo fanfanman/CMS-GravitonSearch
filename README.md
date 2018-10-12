@@ -10,15 +10,15 @@
 - Plots of source data distributions are stored in `/plots`
 
 ### Limit study
-Commands and programs to measure the limit of ADD signal:
+Commands to measure the limit of ADD signal:
 ```
 python computeLimit.py
 python plotlimit.py
 ```
-Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV) to Mmax (\Lambda), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT`. And the `plotlimit.py` program will read measured limits for each lambda value, and plot a result.
+Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV) to Mmax (\Lambda), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT` in the `computeLimit.py` automatically. And the `plotlimit.py` program will read measured limits for each lambda value, and plot a result.
 
 ### Significance study
-Still under development
+- Still under development
 
 ### Some notes:
 1. Mass histograms need to be scaled by:
