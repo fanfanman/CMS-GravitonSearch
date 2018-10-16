@@ -31,7 +31,7 @@ def getMassHisto(fileName):
 	xsecTree.Add(fileName+"/crossSecTree")
 	for entry in xsecTree:
 		xsec = entry.crossSec
-		# print xsec
+		#print "filename = %s, XSec = %f"%(fileName, xsec)
 	
 	result1 = TH1F("h_%s_1"%fileName,"h_%s_1"%fileName,240,0,12000)  # leading muon
 	result2 = TH1F("h_%s_2"%fileName,"h_%s_2"%fileName,240,0,12000)  # trailing muon

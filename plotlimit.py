@@ -11,6 +11,8 @@ CMS_lumi.cmsTextSize = 0.65
 CMS_lumi.outOfFrame = True
 tdrstyle.setTDRStyle()
  
+# scale by xsec or not
+XSec = False
  
 # GET limits from root file
 def getLimits(file_name):
@@ -37,15 +39,19 @@ def plotUpperLimits():
     median = TGraph(N)      # median line
  
     up2s = [ ]
+    if XSec:
+        xseclist = []
+    else:
+        xseclist = [1.0]*N
     for i in range(N):
         file_name = "./dataCards/ee_limit_min%d/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, lambdas[i])
         limit = getLimits(file_name)
         up2s.append(limit[4])
-        yellow.SetPoint(    i,    lambdas[i]/1000, limit[4] ) # + 2 sigma
-        green.SetPoint(     i,    lambdas[i]/1000, limit[3] ) # + 1 sigma
-        median.SetPoint(    i,    lambdas[i]/1000, limit[2] ) # median
-        green.SetPoint(  2*N-1-i, lambdas[i]/1000, limit[1] ) # - 1 sigma
-        yellow.SetPoint( 2*N-1-i, lambdas[i]/1000, limit[0] ) # - 2 sigma
+        yellow.SetPoint(    i,    lambdas[i]/1000, limit[4] * xseclist[i]) # + 2 sigma
+        green.SetPoint(     i,    lambdas[i]/1000, limit[3] * xseclist[i]) # + 1 sigma
+        median.SetPoint(    i,    lambdas[i]/1000, limit[2] * xseclist[i]) # median
+        green.SetPoint(  2*N-1-i, lambdas[i]/1000, limit[1] * xseclist[i]) # - 1 sigma
+        yellow.SetPoint( 2*N-1-i, lambdas[i]/1000, limit[0] * xseclist[i]) # - 2 sigma
         if i == 2 or i == 3:
             print "-------- data -------"
             print "Lambda = %d"%lambdas[i]
@@ -80,6 +86,7 @@ def plotUpperLimits():
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
     frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
+    if XSec: frame.GetYaxis().SetTitle("#sigma")
     #frame.GetYaxis().SetTitle("95% upper limit on #sigma #times BR / (#sigma #times BR)_{SM}")
     frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
     frame.SetMinimum(0)
@@ -122,7 +129,8 @@ def plotUpperLimits():
     legend.Draw()
  
     print " "
-    c.SaveAs("CombineLimitEESinglebinMin%d.png"%Mmin)
+    if XSec: c.SaveAs("CombineLimitEEXsecVSLambdaMin%d.png"%Mmin)
+    else: c.SaveAs("CombineLimitEESinglebinMin%d.png"%Mmin)
     c.Close()
 
  
