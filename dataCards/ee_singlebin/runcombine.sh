@@ -8,7 +8,7 @@ do
   do
     echo ">>>> Mmin = $m"
     mname="dataCard_ee_lambda"$l"_singlebin_Mmin"$m".txt"
-    combine -M Significance $mname -t 1500 -m $l -n $m
+    combine -M Significance $mname -t -1 -m $l -n $m --expectSignal=1
     echo $mname
   done
 

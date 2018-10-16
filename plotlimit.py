@@ -29,6 +29,7 @@ def getLimits(file_name):
 # PLOT upper limits
 def plotUpperLimits():
  
+    Mmin = 2700
     lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
     N = len(lambdas)
     yellow = TGraph(2*N)    # yellow band
@@ -37,7 +38,7 @@ def plotUpperLimits():
  
     up2s = [ ]
     for i in range(N):
-        file_name = "./dataCards/ee_limit/higgsCombineTest.AsymptoticLimits.mH%d.root"%lambdas[i]
+        file_name = "./dataCards/ee_limit_min%d/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, lambdas[i])
         limit = getLimits(file_name)
         up2s.append(limit[4])
         yellow.SetPoint(    i,    lambdas[i]/1000, limit[4] ) # + 2 sigma
@@ -45,7 +46,11 @@ def plotUpperLimits():
         median.SetPoint(    i,    lambdas[i]/1000, limit[2] ) # median
         green.SetPoint(  2*N-1-i, lambdas[i]/1000, limit[1] ) # - 1 sigma
         yellow.SetPoint( 2*N-1-i, lambdas[i]/1000, limit[0] ) # - 2 sigma
- 
+        if i == 2 or i == 3:
+            print "-------- data -------"
+            print "Lambda = %d"%lambdas[i]
+            print "Median = %f"%limit[2] 
+            print "---------------------"
     W = 800
     H  = 600
     T = 0.08*H
@@ -117,7 +122,7 @@ def plotUpperLimits():
     legend.Draw()
  
     print " "
-    c.SaveAs("CombineSampleLimit.png")
+    c.SaveAs("CombineLimitEESinglebinMin%d.png"%Mmin)
     c.Close()
 
  

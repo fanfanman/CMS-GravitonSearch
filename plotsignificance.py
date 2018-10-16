@@ -45,7 +45,7 @@ def plotUpperLimits():
         thislam = TGraph(len(Mmin))
         thislimit = []
 	for mm in range(len(Mmin)):
-        	file_name = "./dataCards/ee_singlebin/higgsCombine%d.Significance.mH%d.123456.root"%(Mmin[mm], lambdas[i])
+        	file_name = "./dataCards/ee_singlebin/higgsCombine%d.Significance.mH%d.root"%(Mmin[mm], lambdas[i])
         	limit = getLimits(file_name)
 		thislam.SetPoint(mm, Mmin[mm], limit[0])
 		thislam.SetLineColor(i+2)
@@ -80,7 +80,7 @@ def plotUpperLimits():
     c.SetTicky(0)
     c.SetGrid()
     c.cd()
-    frame = c.DrawFrame(1000,0.18,3500, 0.5)
+    frame = c.DrawFrame(1100,0.1,3700, 25)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)
@@ -137,7 +137,7 @@ def plotUpperLimits():
     legend.Draw()
  
     print " "
-    c.SaveAs("CombineSamplePlot.png")
+    c.SaveAs("CombineSignificance.png")
     c.Close()
  
 

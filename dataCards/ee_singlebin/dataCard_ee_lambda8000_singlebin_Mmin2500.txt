@@ -15,6 +15,6 @@ observation -1
 bin             bin1 bin1
 process         ADD  DY
 process          0     1 
-rate            0.269303   0.836357
+rate            1.105660   0.836357
 ------------
 lumi    lnN    1.025    -

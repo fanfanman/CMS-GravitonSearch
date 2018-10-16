@@ -136,7 +136,7 @@ def writeDatacard(sigYield, dyYield, lambdaT, Mmin):
 	
 	fname = "dataCards/ee_singlebin/dataCard_ee_lambda%d_singlebin_Mmin%d.txt"%(lambdaT,Mmin)
 	fout = open(fname, "w")
-	fout.write(template%(sigYield-dyYield, dyYield))
+	fout.write(template%(sigYield, dyYield))   # For significance, data=ADD+DY
 	fout.close()
 	return fname
 
@@ -144,7 +144,7 @@ def writeDatacard(sigYield, dyYield, lambdaT, Mmin):
 # execute datacard, not valid yet
 def executeDatacard(fname, lambdaT, minmass):
 
-	combine_command = "combine -M Significance %s -t 500 -m %d -n %d"%(fname, lambdaT, minmass)
+	combine_command = "combine -M Significance %s -t -1 -m %d -n %d --expectSignal=1"%(fname, lambdaT, minmass)
 	print ">>> command: " + combine_command
 
 	p = subprocess.Popen(combine_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -153,7 +153,7 @@ def executeDatacard(fname, lambdaT, minmass):
 	print ">>> higgsCombine rootfile created"
 	retval = p.wait()
 
-	rf = "higgsCombine%d.Significance.mH%d.123456.root"%(minmass, lambdaT)
+	rf = "higgsCombine%d.Significance.mH%d.root"%(minmass, lambdaT)
 	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_singlebin/%s"%(rf, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()

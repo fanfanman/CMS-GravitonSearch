@@ -135,9 +135,9 @@ def getMassDistroDY():
 # write datacards based on
 # sigYield = ADD - DY
 # dyYield = DY event yield only
-def writeDatacard(sigYield, dyYield, lambdaT):
+def writeDatacard(sigYield, dyYield, lambdaT, Mmin):
 	
-	fname = "dataCards/ee_limit/dataCard_ee_lambda%d_singlebin.txt"%(lambdaT)
+	fname = "dataCards/ee_limit_min%d/dataCard_ee_lambda%d_singlebin.txt"%(Mmin, lambdaT)
 	fout = open(fname, "w")
 	fout.write(template%(sigYield-dyYield, dyYield))
 	fout.close()
@@ -146,7 +146,7 @@ def writeDatacard(sigYield, dyYield, lambdaT):
 
 # execute datacards
 # and move them to /dataCards
-def executeDatacard(fname, lambdaT):
+def executeDatacard(fname, lambdaT, Mmin):
 
 	combine_command = "combine -M AsymptoticLimits %s -m %d"%(fname, lambdaT)
 	print ">>> command: " + combine_command
@@ -158,7 +158,7 @@ def executeDatacard(fname, lambdaT):
 	retval = p.wait()
 
 	rf = "higgsCombineTest.AsymptoticLimits.mH%d.root"%(lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_limit/%s"%(rf, rf), shell=True)
+	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_limit_min%d/%s"%(rf, Mmin, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 
@@ -183,7 +183,7 @@ def main():
 
 	# read event yield from mass spectrum
 	# above a minimum mass Mmin
-	Mmin = 2800
+	Mmin = 3200
 	dyNum = 0                    # DY yield
 	sigNum = [0]*len(lambdas)    # signal yields for lambdas
 	bw = dyHist.GetBinWidth(1)   # binwidth = 50 GeV
@@ -207,8 +207,8 @@ def main():
 	print "-----------------------------------"
 	
 	for i in range(len(lambdas)):
-		fname = writeDatacard(sigNum[i], dyNum, lambdas[i])
-		executeDatacard(fname, lambdas[i])
+		fname = writeDatacard(sigNum[i], dyNum, lambdas[i], Mmin)
+		executeDatacard(fname, lambdas[i], Mmin)
 	print ">>> Done!"
 
 
