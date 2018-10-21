@@ -8,6 +8,7 @@
 - Source DY and ADD mass spectra are stored in `ADDdata/` and `CIdata/` (which are too large so I didn't commit them)
 - Data Cards for Combine are stored in `dataCards/`
 - Plots of source data distributions are stored in `rawDataPlots/`
+- Measurement plots of limits are stored in `limits/`
 
 ### Limit study
 Commands to measure the limit of ADD signal:
@@ -15,7 +16,7 @@ Commands to measure the limit of ADD signal:
 python computeLimit.py
 python plotlimit.py
 ```
-Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV) to Mmax (\Lambda), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT` in the `computeLimit.py` automatically. And the `plotlimit.py` program will read measured limits for each lambda value, and plot a result.
+Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV) to Mmax (\Lambda), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT` in the `computeLimit.py` automatically. And the `plotLimit.py` program will read measured limits for each lambda value, and plot a result.
 
 ### Significance study
 - Still under development
@@ -26,5 +27,10 @@ Where `computeLimit.py` will read source data, calculate the integrals (event yi
 - Scale(36300\*XSec), which is luminosity \* cross section
 - Scale(1/BinWidth), so the height of histograms will not change with bin width (only in raw data plotting)
 2. Current focus is placed on dielectron channel
-3. There's a no-match in low pt histograms, need to check later!!
+3. There's a no-match in low pt histograms, need to check later!
 4. Systematic errors in datacards only consist of luminosity, need to add more later!
+
+### Update Oct 20th
+- Updated raw data plotting to include both constructive and destructive
+- Updated limit measurement for either constructive or destructive
+- Current signal = (ADD+DY) - DY, not including interference term
