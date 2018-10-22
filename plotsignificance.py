@@ -31,7 +31,7 @@ def getLimits(file_name):
 
  
 # PLOT upper limits
-def plotUpperLimits():
+def plotUpperLimits(label):
  
     lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
     N = len(lambdas)
@@ -45,7 +45,7 @@ def plotUpperLimits():
         thislam = TGraph(len(Mmin))
         thislimit = []
 	for mm in range(len(Mmin)):
-        	file_name = "./dataCards/ee_singlebin/higgsCombine%d.Significance.mH%d.root"%(Mmin[mm], lambdas[i])
+        	file_name = "./dataCards/ee_singlebin_%s/higgsCombine%d.Significance.mH%d.root"%(label, Mmin[mm], lambdas[i])
         	limit = getLimits(file_name)
 		thislam.SetPoint(mm, Mmin[mm], limit[0])
 		thislam.SetLineColor(i+2)
@@ -137,14 +137,15 @@ def plotUpperLimits():
     legend.Draw()
  
     print " "
-    c.SaveAs("CombineSignificance.png")
+    c.SaveAs("limits/Significance_ee_%s.png"%label)
     c.Close()
  
 
 # MAIN
 def main():
  
-    plotUpperLimits()
+    plotUpperLimits("Con")
+    plotUpperLimits("Des")
  
  
 if __name__ == '__main__':

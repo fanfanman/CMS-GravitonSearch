@@ -55,6 +55,7 @@ def plotLimits(label):
     
     for i in range(N):
         limit = getCross(Mmin[i], label)
+        print Mmin[i], limit[2]
         yellow.SetPoint(    i,    Mmin[i], limit[4]) # + 2 sigma
         green.SetPoint(     i,    Mmin[i], limit[3]) # + 1 sigma
         median.SetPoint(    i,    Mmin[i], limit[2]) # median

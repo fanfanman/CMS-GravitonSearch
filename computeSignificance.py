@@ -18,8 +18,8 @@ else:
 	from electronResolution import getResolution
 
 ## efficiency map
-weightHistMu = TFile("rootfiles/effMapMuons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
-weightHistEle = TFile("rootfiles/effMapElectrons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
+weightHistMu = TFile("ADDdata/effMapMuons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
+weightHistEle = TFile("ADDdata/effMapElectrons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
 
 
 ## template for dataCards
@@ -98,7 +98,7 @@ def getMassHisto(fileName):
 
 
 # get mass distribution of ADD files
-def getMassDistroSignal(name, mass):
+def getMassDistroSignal(name, mass, label):
 	
 	massBins = ["M120To200", "M200To400", "M400To800", "M800To1400", "M1400To2300",
 		    "M2300To3500", "M3500To4500", "M4500To6000", "M6000ToInf"]
@@ -106,7 +106,7 @@ def getMassDistroSignal(name, mass):
 	result = TH1F("h_%s"%name,"h_%s"%name,240,0,12000)
 	
 	for massBin in massBins:
-		result.Add(getMassHisto("rootfiles/ADD_LambdaT%d_%s_13TeV-pythia8_cff_1.root"%(mass,massBin)))
+		result.Add(getMassHisto("ADDdata/ADD_LambdaT%d_%s_%s_13TeV-pythia8_cff_1.root"%(mass,label,massBin)))
 	
 	result.Scale(0.333333)
 	return result
@@ -124,7 +124,7 @@ def getMassDistroDY():
 	else: leptype = "EE"
 
 	for massBin in massBins:
-		result.Add(getMassHisto("rootfiles/DYTo%s_%s_13TeV-pythia8_cff_1.root"%(leptype, massBin)))
+		result.Add(getMassHisto("ADDdata/DYTo%s_%s_13TeV-pythia8_cff_1.root"%(leptype, massBin)))
 	
 	return result
 
@@ -132,9 +132,9 @@ def getMassDistroDY():
 # write datacards based on
 # sigYield = ADD + DY
 # dyYield = DY event yield only
-def writeDatacard(sigYield, dyYield, lambdaT, Mmin):
+def writeDatacard(sigYield, dyYield, lambdaT, Mmin, label):
 	
-	fname = "dataCards/ee_singlebin/dataCard_ee_lambda%d_singlebin_Mmin%d.txt"%(lambdaT,Mmin)
+	fname = "dataCards/ee_singlebin_%s/dataCard_ee_lambda%d_Mmin%d.txt"%(label, lambdaT,Mmin)
 	fout = open(fname, "w")
 	fout.write(template%(sigYield, dyYield))   # For significance, data=ADD+DY
 	fout.close()
@@ -142,7 +142,7 @@ def writeDatacard(sigYield, dyYield, lambdaT, Mmin):
 
 
 # execute datacard, not valid yet
-def executeDatacard(fname, lambdaT, minmass):
+def executeDatacard(fname, lambdaT, minmass, label):
 
 	combine_command = "combine -M Significance %s -t -1 -m %d -n %d --expectSignal=1"%(fname, lambdaT, minmass)
 	print ">>> command: " + combine_command
@@ -154,13 +154,13 @@ def executeDatacard(fname, lambdaT, minmass):
 	retval = p.wait()
 
 	rf = "higgsCombine%d.Significance.mH%d.root"%(minmass, lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_singlebin/%s"%(rf, rf), shell=True)
+	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_singlebin_%s/%s"%(rf, label, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 
 
 # plot invariant mass spectrum for a single lambdaT
-def main():
+def getSignificance(label):
 
 	lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
 	# lambdas = [4000]
@@ -169,7 +169,7 @@ def main():
 	# read in histograms
 	# and scale (1/binwidth)	
 	for lambdaT in lambdas:
-		signalHist = getMassDistroSignal(str(lambdaT), lambdaT)
+		signalHist = getMassDistroSignal(str(lambdaT), lambdaT, label)
 		signalHist.Scale(0.02)
 		signalHists.append(signalHist)
 		print ">>> Finished reading lambda = %d"%lambdaT
@@ -205,9 +205,14 @@ def main():
 		print "-----------------------------------"
 		
 		for i in range(len(lambdas)):
-			fname = writeDatacard(sigNum[mm][i], dyNum[mm], lambdas[i], Mmin[mm])
-			executeDatacard(fname, lambdas[i], Mmin[mm])
+			fname = writeDatacard(sigNum[mm][i], dyNum[mm], lambdas[i], Mmin[mm], label)
+			executeDatacard(fname, lambdas[i], Mmin[mm], label)
 	print ">>> Done!"
+
+
+def main():
+	getSignificance("Con")
+	getSignificance("Des")
 
 
 # MAIN
