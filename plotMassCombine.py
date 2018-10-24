@@ -16,7 +16,7 @@ def main():
 
 	# read in histograms	
 	for lambdaT in lambdas:
-		signalHist = getMassDistroSignal("ADD",lambdaT, isMuon, True)
+		signalHist = getMassDistroSignal("ADD",lambdaT, isMuon, "_Con")
 		signalHist.Scale(0.02)
 		signalHists.append(signalHist)
 		print ">>> Finished reading lambda = %d"%lambdaT

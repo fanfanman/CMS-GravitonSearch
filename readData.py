@@ -30,12 +30,14 @@ def getMassHisto(fileName, isMuon):
 	from ROOT import TChain
 	xsecTree = TChain()
 	xsecTree.Add(fileName+"/crossSecTree")
+	xsec = 0
 	for entry in xsecTree:
 		xsec = entry.crossSec
 	
 	tree = TChain()
 	tree.Add(fileName+"/pdfTree")
 	result = TH1F("h_%s"%fileName,"h_%s"%fileName,240,0,12000)
+	count = tree.GetEntries()
 	for ev in tree:
 		mass = tree.GetLeaf("bosonP4/mass").GetValue()
 		weight = 1.
@@ -67,25 +69,29 @@ def getMassHisto(fileName, isMuon):
 			else:
 				mass = mass*rand.Gaus(1,getResolution(mass)["sigma"]["BE"])		
 		result.Fill(mass,weight)
+
+	#print count
 	result.Sumw2()
-	result.Scale(36300*xsec/100000)
+	result.Scale(36300*xsec/count)
 	return deepcopy(result)
 
 
 # get mass distribution of ADD files
-def getMassDistroSignal(name, lambdaT, isMuon, isCon):
+def getMassDistroSignal(name, model, lambdaT, heli, isMuon):
 	
 	massBins = ["M120To200", "M200To400", "M400To800", "M800To1400", "M1400To2300",
 		    "M2300To3500", "M3500To4500", "M4500To6000", "M6000ToInf"]
 	result = TH1F("h_%s"%name,"h_%s"%name,240,0,12000)
-	
-	if isCon: label = "Con"
-	else: label = "Des"
 
 	for massBin in massBins:
-		result.Add(getMassHisto("ADDdata/ADD_LambdaT%d_%s_%s_13TeV-pythia8_cff_1.root"%(lambdaT,label,massBin), isMuon))
+		if model == "ADD":
+			fname = "%sdata/%s_LambdaT%d%s_%s_13TeV-pythia8_cff_1.root"%(model, model, lambdaT, heli, massBin)
+		else: # model == "CI"
+			fname = "%sdata/%s_Lambda%d%s_%s_13TeV-pythia8_cff_1.root"%(model, model, lambdaT, heli, massBin)
+		result.Add(getMassHisto(fname, isMuon))
 
-	result.Scale(0.333333)
+	# ADD cannot be separable, but CI separable
+	if model == "ADD": result.Scale(0.333333)
 	return result
 
 
@@ -104,6 +110,35 @@ def getMassDistroDY(isMuon):
 	
 	return result
 		
+
+'''def getMassDistroCI(lambdaT, heli, isMuon):
+
+	model = "CI"
+	rethist = []
+	for helicity in heli:
+		rethist.append(getMassDistroSignal(model+helicity, model, lambdaT, helicity, isMuon).Clone())
+
+	return rethist
+
+
+def getMassDistroADD(lambdaT, heli, isMuon):
+	
+	model = "ADD"
+	rethist = []
+
+	for helicity in heli:
+		rethist.append(getMassDistroSignal(model+helicity, model, lambdaT, helicity, isMuon).Clone())
+
+	return rethist
+'''
+
+def getMassDistro(model, heli, lambdaT, isMuon):
+
+	retlist = []
+	for helicity in heli:
+		retlist.append(getMassDistroSignal(model+helicity, model, lambdaT, helicity, isMuon).Clone())
+	return retlist
+
 
 if __name__ == "__main__":
     main()

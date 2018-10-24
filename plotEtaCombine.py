@@ -36,7 +36,9 @@ def getMassHisto(fileName):
 	result1 = TH1F("h_%s_1"%fileName,"h_%s_1"%fileName,48,-2.4,2.4)  # leading muon
 	result2 = TH1F("h_%s_2"%fileName,"h_%s_2"%fileName,48,-2.4,2.4)  # trailing muon
 
+	count = 0
 	for ev in tree:
+		count += 1
 		mass = tree.GetLeaf("bosonP4/mass").GetValue()
 		weight1 = 1.
 		weight2 = 1.
@@ -73,9 +75,9 @@ def getMassHisto(fileName):
 		result2.Fill(eta2, weight2)
 
 	result1.Sumw2()
-	result1.Scale(36300*xsec/100000)
+	result1.Scale(36300*xsec/count)
 	result2.Sumw2()
-	result2.Scale(36300*xsec/100000)
+	result2.Scale(36300*xsec/count)
 
 	return deepcopy(result1), deepcopy(result2)
 

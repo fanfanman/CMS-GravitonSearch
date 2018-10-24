@@ -2,6 +2,7 @@ import ROOT
 from ROOT import TFile, TTree, TCanvas, TGraph, TMultiGraph, TGraphErrors, TLegend
 import CMS_lumi, tdrstyle
 import subprocess # to execute shell command
+import sys
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
  
 # CMS style
@@ -29,35 +30,34 @@ def getLimits(file_name):
  
  
 # PLOT upper limits
-def plotUpperLimits(label):
+def plotUpperLimits(model, lambdas, helicity, Mmin):
  
-    Mmin = 3200
-    lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
     N = len(lambdas)
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
     median = TGraph(N)      # median line
  
     up2s = [ ]
-    if XSec:
-        xseclist = []
-    else:
-        xseclist = [1.0]*N
+    xseclist = [1.0]*N
     
     for i in range(N):
-        file_name = "./dataCards/ee_limit_min%d_%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, lambdas[i])
+        file_name = "./%sdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, Mmin, helicity, lambdas[i])
         limit = getLimits(file_name)
         up2s.append(limit[4])
-        yellow.SetPoint(    i,    lambdas[i]/1000, limit[4] * xseclist[i]) # + 2 sigma
-        green.SetPoint(     i,    lambdas[i]/1000, limit[3] * xseclist[i]) # + 1 sigma
-        median.SetPoint(    i,    lambdas[i]/1000, limit[2] * xseclist[i]) # median
-        green.SetPoint(  2*N-1-i, lambdas[i]/1000, limit[1] * xseclist[i]) # - 1 sigma
-        yellow.SetPoint( 2*N-1-i, lambdas[i]/1000, limit[0] * xseclist[i]) # - 2 sigma
-        if i == 2 or i == 3:
-            print "-------- data -------"
-            print "Lambda = %d"%lambdas[i]
-            print "Median = %f"%limit[2] 
-            print "---------------------"
+        if model == "ADD":
+            yellow.SetPoint(    i,    lambdas[i]/1000, limit[4] * xseclist[i]) # + 2 sigma
+            green.SetPoint(     i,    lambdas[i]/1000, limit[3] * xseclist[i]) # + 1 sigma
+            median.SetPoint(    i,    lambdas[i]/1000, limit[2] * xseclist[i]) # median
+            green.SetPoint(  2*N-1-i, lambdas[i]/1000, limit[1] * xseclist[i]) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, lambdas[i]/1000, limit[0] * xseclist[i]) # - 2 sigma
+        else:
+            yellow.SetPoint(    i,    lambdas[i], limit[4] * xseclist[i]) # + 2 sigma
+            green.SetPoint(     i,    lambdas[i], limit[3] * xseclist[i]) # + 1 sigma
+            median.SetPoint(    i,    lambdas[i], limit[2] * xseclist[i]) # median
+            green.SetPoint(  2*N-1-i, lambdas[i], limit[1] * xseclist[i]) # - 1 sigma
+            yellow.SetPoint( 2*N-1-i, lambdas[i], limit[0] * xseclist[i]) # - 2 sigma
+        print "Lambda = %d, Median = %f"%(lambdas[i], limit[2])
+
     W = 800
     H  = 600
     T = 0.08*H
@@ -77,7 +77,8 @@ def plotUpperLimits(label):
     c.SetTicky(0)
     c.SetGrid()
     c.cd()
-    frame = c.DrawFrame(4, 0.01, 10, 10)
+    if model == "ADD": frame = c.DrawFrame(4, 0.01, 10, 10)
+    else: frame = c.DrawFrame(16, 0.1, 40, 8)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)
@@ -87,9 +88,8 @@ def plotUpperLimits(label):
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
     frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
-    if XSec: frame.GetYaxis().SetTitle("#sigma")
-    #frame.GetYaxis().SetTitle("95% upper limit on #sigma #times BR / (#sigma #times BR)_{SM}")
-    frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
+    if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
+    else: frame.GetXaxis().SetTitle("#Lambda [CI]")
     frame.SetMinimum(0)
     #frame.SetMaximum(max(up2s)*1.05)
     #frame.GetXaxis().SetLimits(min(values),max(values))
@@ -122,23 +122,35 @@ def plotUpperLimits(label):
     legend.SetBorderSize(0)
     legend.SetTextSize(0.041)
     legend.SetTextFont(42)
-    legend.AddEntry(median, "Asymptotic CL_{s} expected %s"%label,'L')
+    legend.AddEntry(median, "Asymptotic CL_{s} expected %s%s"%(model, helicity),'L')
     legend.AddEntry(green, "#pm 1 std. deviation",'f')
     legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
     legend.Draw()
 
     if XSec: 
-        c.SaveAs("limits/Limit_ee_XsecVSLambdaTMin%d_%s.png"%(Mmin, label))
+        c.SaveAs("%slimits/%sLimit_ee_XsecVSLambdaTMin%d%s.png"%(model, model, Mmin, helicity))
     else: 
-        c.SaveAs("limits/Limit_ee_SinglebinMin%d_%s.png"%(Mmin, label))
+        c.SaveAs("%slimits/%sLimit_ee_SinglebinMin%d%s.png"%(model, model, Mmin, helicity))
     c.Close()
 
  
 # MAIN
-def main():
-    plotUpperLimits("Con")
-    plotUpperLimits("Des")
+def main(argv):
+
+    model = argv[0]
+    Mmin = int(argv[1])
+
+    if model == "ADD":
+        lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+        heli = ["_Con", "_Des"]
+    else:
+        lambdas = [16, 22, 28, 32, 40]
+        heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
+    
+
+    for helicity in heli:
+        plotUpperLimits(model, lambdas, helicity, Mmin)
  
  
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

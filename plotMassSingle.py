@@ -2,23 +2,25 @@ from ROOT import *
 from setTDRStyle import setTDRStyle
 from copy import deepcopy
 import ratios
+import sys
 
 # Parameter setting
+model = ""
 resolution = True
 isMuon = False
+from readData import getMassDistroDY, getMassDistro
 
-from readData import getMassHisto, getMassDistroSignal, getMassDistroDY		
 
 # plot invariant mass spectrum for a single lambdaT
-def plotsingle(lambdaT):
+def plotsingle(model, heli, lambdaT):
 
-	# read in histograms	
-	signalCon = getMassDistroSignal("ADD", lambdaT, isMuon, True)
-	signalDes = getMassDistroSignal("ADD", lambdaT, isMuon, False)
+	# read in histograms
+	signalHists = getMassDistro(model, heli, lambdaT, isMuon)
+	for histi in signalHists:
+		histi.Scale(0.02)
+
+	# read in DY histograms
 	dyHist = getMassDistroDY(isMuon)
-	
-	signalCon.Scale(0.02)
-	signalDes.Scale(0.02)
 	dyHist.Scale(0.02)
 
 	# set up canvas
@@ -36,10 +38,9 @@ def plotsingle(lambdaT):
 	plotPad.DrawFrame(120,1e-7,7000,2.5e3,";mass [GeV];Events / 50 GeV")
 
 	# plotting
-	signalCon.SetLineColor(kRed)
-	signalDes.SetLineColor(kBlue)
-	signalCon.Draw("histsame")
-	signalDes.Draw("histsame")
+	for (i, sigHist) in enumerate(signalHists):
+		sigHist.SetLineColor(i+2)
+		sigHist.Draw("histsame")
 	dyHist.Draw("histsame")
 
 	# draw CMS prelim
@@ -56,8 +57,10 @@ def plotsingle(lambdaT):
 	latexCMSExtra.SetTextFont(52)
 	latexCMSExtra.SetTextSize(0.03)
 	latexCMSExtra.SetNDC(True) 
-		
-	latex.DrawLatex(0.95, 0.96, "36.3 fb^{-1} (13 TeV)")
+	
+	latexCMSlepton = "ee"
+	if isMuon: latexCMSlepton = "#mu#mu"
+	latex.DrawLatex(0.95, 0.96, "36.3 fb^{-1} (13 TeV, %s)"%latexCMSlepton)
 	cmsExtra = "#splitline{Private Work}{Simulation}"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
 	if "Simulation" in cmsExtra:
@@ -76,40 +79,50 @@ def plotsingle(lambdaT):
 
 	if resolution:
 		leg.AddEntry(dyHist,"Drell-Yan smeared (#Lambda = %d)"%lambdaT,"l")
-		leg.AddEntry(signalCon,"Drell-Yan x ADD Con smeared (#Lambda = %d)"%lambdaT,"l")
-		leg.AddEntry(signalDes,"Drell-Yan x ADD Des smeared (#Lambda = %d)"%lambdaT,"l")
+		for (i, helicity) in enumerate(heli):
+			leg.AddEntry(signalHists[i],"Drell-Yan x %s%s smeared (#Lambda = %d)"%(model, helicity, lambdaT),"l")
+		#leg.AddEntry(signalHists[1],"Drell-Yan x %s Des smeared (#Lambda = %d)"%(model, lambdaT),"l")
 	else:
 		leg.AddEntry(dyHist,"Drell-Yan (#Lambda = %d)"%lambdaT,"l")
-		leg.AddEntry(signalCon,"Drell-Yan x ADD Con (#Lambda = %d)"%lambdaT,"l")
-		leg.AddEntry(signalDes,"Drell-Yan x ADD Des (#Lambda = %d)"%lambdaT,"l")
+		for (i, helicity) in enumerate(heli):
+			leg.AddEntry(signalHists[i],"Drell-Yan x %s%s (#Lambda = %d)"%(model, helicity, lambdaT),"l")
+		#leg.AddEntry(signalHists[1],"Drell-Yan x %s Des (#Lambda = %d)"%(model, lambdaT),"l")
 
 	leg.Draw("same")
-
+	
 	# draw ratio pad
 	ratioPad.cd()
-	ratioCon = ratios.RatioGraph(signalCon, dyHist, 120, 7000,title="S+B / B Con",yMin=0.5,yMax=1.5,ndivisions=10,color=signalCon.GetLineColor(),adaptiveBinning=0.25)
-	ratioCon.draw(gPad,True,False,True,chi2Pos=0.7)
-	ratioDes = ratios.RatioGraph(signalDes, dyHist, 120, 7000,title="S+B / B Des",yMin=0.5,yMax=1.5,ndivisions=10,color=signalDes.GetLineColor(),adaptiveBinning=0.25)
-	ratioDes.draw(gPad,True,False,True,chi2Pos=0.7)
+	if model == "ADD":
+		ratio = ratios.RatioGraph(signalHists[0], signalHists[1], 120, 7000,title="S+B Con / S+B Des",yMin=0.5,yMax=2.0,ndivisions=10,color=signalHists[0].GetLineColor(),adaptiveBinning=0.25)
+		ratio.draw(gPad,True,False,True,chi2Pos=0.7)
+	else: # model == "CI":
+		ratio = ratios.RatioGraph(signalHists[0], signalHists[3], 120, 7000,title="S+B ConLL / S+B DesLL",yMin=0.5,yMax=2.0,ndivisions=10,color=signalHists[0].GetLineColor(),adaptiveBinning=0.25)
+                ratio.draw(gPad,True,False,True,chi2Pos=0.7)
 
 	# save graphs
 	if resolution:	
 		if isMuon:
-			canv.Print("rawDataPlots/MassHist_LambdaT%d_Muon.pdf"%(lambdaT))
+			canv.Print("rawDataPlots/%s_MassHist_LambdaT%d_Muon.pdf"%(model, lambdaT))
 		else:	
-			canv.Print("rawDataPlots/MassHist_LambdaT%d_Electron.pdf"%(lambdaT))
+			canv.Print("rawDataPlots/%s_MassHist_LambdaT%d_Electron.pdf"%(model, lambdaT))
 	else:
-		canv.Print("rawDataPlots/MassHist_LambdaT%d.pdf"%(lambdaT))
+		canv.Print("rawDataPlots/%s_MassHist_LambdaT%d.pdf"%(model, lambdaT))
 
 		
-def main():
+def main(argv):
     
-	# for each lambdaT, plot a single graph for it
-	lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-	# lambdas = [4000]
+	model = argv[0]
+	
+	if model == "ADD": 
+		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+		heli = ["_Con", "_Des"]
+	else: 
+		lambdas = [16, 22, 28, 32, 40]
+		heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
+
 	for lambdaT in lambdas:
-		plotsingle(lambdaT)
+		plotsingle(model, heli, lambdaT)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

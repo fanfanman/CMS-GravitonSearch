@@ -34,14 +34,14 @@ rate            %f   %f
 lumi    lnN    1.025    -
 """
 
-from readData import getMassHisto, getMassDistroSignal, getMassDistroDY
+from readData import getMassDistroDY, getMassDistro
 
 # write datacards based on
 # sigYield = ADD - DY
 # dyYield = DY event yield only
-def writeDatacard(sigYield, dyYield, lambdaT, Mmin, label):
+def writeDatacard(model, sigYield, dyYield, lambdaT, Mmin, label):
 	
-	outDir = "dataCards/ee_limit_min%d_%s/"%(Mmin, label)
+	outDir = "%sdataCards/ee_limit_min%d%s/"%(model, Mmin, label)
 	if not os.path.exists(outDir):
                 os.makedirs(outDir)
 
@@ -54,7 +54,7 @@ def writeDatacard(sigYield, dyYield, lambdaT, Mmin, label):
 
 # execute datacards
 # and move them to /dataCards
-def executeDatacard(fname, lambdaT, Mmin, label):
+def executeDatacard(model, fname, lambdaT, Mmin, label):
 
 	combine_command = "combine -M AsymptoticLimits %s -m %d"%(fname, lambdaT)
 	print ">>> command: " + combine_command
@@ -66,40 +66,50 @@ def executeDatacard(fname, lambdaT, Mmin, label):
 	retval = p.wait()
 
 	rf = "higgsCombineTest.AsymptoticLimits.mH%d.root"%(lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_limit_min%d_%s/%s"%(rf, Mmin, label, rf), shell=True)
+	mvfile = subprocess.Popen("mv ./%s ./%sdataCards/ee_limit_min%d%s/%s"%(rf, model, Mmin, label, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 
 
 # plot invariant mass spectrum for a single lambdaT
 # write datacards, and execute datacards
-def main():
+def main(argv):
 
-	lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-	# lambdas = [4000]
-	sigCon = []
-	sigDes = []
+	# read in parameters
+	model = argv[0]
+	Mmin = float(argv[1])
+	
+	if model == "ADD": 
+		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+		# heli = ["_Con", "_Des"]
+		heli = [""]
+	else: 
+		lambdas = [16, 22, 28, 32, 40]
+		heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
 
-	# read in histograms
-	# and scale by (1/binwidth)	
+	# read raw data histograms
+	# and DY histograms
+	sigHists = []  # sigHists[lambdaT][helicity]
 	for lambdaT in lambdas:
-		signalCon = getMassDistroSignal(str(lambdaT), lambdaT, isMuon, True)
-		signalDes = getMassDistroSignal(str(lambdaT), lambdaT, isMuon, False)
-		sigCon.append(signalCon)
-		sigDes.append(signalDes)
-		print ">>> Finished reading lambda = %d"%lambdaT
+		sigHists.append(getMassDistro(model, heli, lambdaT, isMuon))
 	dyHist = getMassDistroDY(isMuon)
 
 	# read event yield from mass spectrum
 	# above a minimum mass Mmin
-	Mmin = 3200
+	# Mmin = argv[0]
 	dyNum = [0]*len(lambdas)     # DY yield
-	conNum = [0]*len(lambdas)    # signal yields for lambdas
-	desNum = [0]*len(lambdas)    # interference term
+	hhNum = []		     # hhNum[lambdaT][helicity]
+	for i in range(len(lambdas)): 
+		hhNum.append([0]*len(heli)) 
+	
+	Mmax = 10000
 	for i in range(len(lambdas)):
-		dyNum[i] = dyHist.Integral(dyHist.FindBin(Mmin), dyHist.FindBin(lambdas[i]))
-		conNum[i] = sigCon[i].Integral(sigCon[i].FindBin(Mmin), sigCon[i].FindBin(lambdas[i]))
-		desNum[i] = sigDes[i].Integral(sigDes[i].FindBin(Mmin), sigDes[i].FindBin(lambdas[i]))
+		if model == "ADD": Mmax = lambdas[i]
+		dyNum[i] = dyHist.Integral(dyHist.FindBin(Mmin), dyHist.FindBin(Mmax))
+		for j in range(len(heli)):
+			hhNum[i][j] = sigHists[i][j].Integral(sigHists[i][j].FindBin(Mmin), sigHists[i][j].FindBin(Mmax))
+		#conNum[i] = sigCon[i].Integral(sigCon[i].FindBin(Mmin), sigCon[i].FindBin(Mmax))
+		#desNum[i] = sigDes[i].Integral(sigDes[i].FindBin(Mmin), sigDes[i].FindBin(Mmax))
 
 	# print information
 	# and execute datacards
@@ -107,17 +117,21 @@ def main():
 	print ">>> Min mass cut: %f GeV"%Mmin
 	for i in range(len(lambdas)):
 		print ">>> DY event yield: %f"%dyNum[i]
-		print ">>> Signal lambda %d event yield: %f and %f"%(lambdas[i], conNum[i], desNum[i])
+		print ">>> %s model lambda %d event yield:"%(model, lambdas[i])
+		print hhNum[i]
 	print "-----------------------------------"
 	
 	for i in range(len(lambdas)):
-		fcon = writeDatacard(conNum[i], dyNum[i], lambdas[i], Mmin, "Con")
-		fdes = writeDatacard(desNum[i], dyNum[i], lambdas[i], Mmin, "Des")
-		executeDatacard(fcon, lambdas[i], Mmin, "Con")
-		executeDatacard(fdes, lambdas[i], Mmin, "Des")
+		#fcon = writeDatacard(model, conNum[i], dyNum[i], lambdas[i], Mmin, "Con")
+		#fdes = writeDatacard(model, desNum[i], dyNum[i], lambdas[i], Mmin, "Des")
+		#executeDatacard(model, fcon, lambdas[i], Mmin, "Con")
+		#executeDatacard(model, fdes, lambdas[i], Mmin, "Des")
+		for j in range(len(heli)):
+			fout = writeDatacard(model, hhNum[i][j], dyNum[i], lambdas[i], Mmin, heli[j])
+			executeDatacard(model, fout, lambdas[i], Mmin, heli[j])
 	print ">>> Done!"
 
 
 # MAIN
 if __name__ == "__main__":
-	main()
+	main(sys.argv[1:])

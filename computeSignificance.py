@@ -1,26 +1,15 @@
 from ROOT import * 
-from numpy import array as ar
-from array import array
 from setTDRStyle import setTDRStyle
 from copy import deepcopy
 
-import sys
+import sys, os
 import ratios
 import subprocess
 rand = TRandom3()
 
-## no change
-muon = False
+## Initialization
+isMuon = False
 resolution = True
-if muon:
-	from muonResolution import getResolution
-else:
-	from electronResolution import getResolution
-
-## efficiency map
-weightHistMu = TFile("ADDdata/effMapMuons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
-weightHistEle = TFile("ADDdata/effMapElectrons.root","OPEN").Get("hCanvas").GetPrimitive("plotPad").GetPrimitive("bla")
-
 
 ## template for dataCards
 template = """
@@ -45,106 +34,29 @@ rate            %f   %f
 lumi    lnN    1.025    -
 """
 
-
-# get invariant mass spectrum
-def getMassHisto(fileName):
-	f = TFile(fileName,"OPEN")
-
-	from ROOT import TChain
-	tree = TChain()
-	tree.Add(fileName+"/pdfTree")	
-
-	xsecTree = TChain()
-	xsecTree.Add(fileName+"/crossSecTree")
-	for entry in xsecTree:
-		xsec = entry.crossSec
-	result = TH1F("h_%s"%fileName,"h_%s"%fileName,240,0,12000)
-	for ev in tree:
-		mass = tree.GetLeaf("bosonP4/mass").GetValue()
-		weight = 1.
-		if resolution:
-			eta1 = tree.GetLeaf("decay1P4/eta").GetValue()
-			eta2 = tree.GetLeaf("decay2P4/eta").GetValue()
-			pt1 = tree.GetLeaf("decay1P4/pt").GetValue()
-			pt2 = tree.GetLeaf("decay2P4/pt").GetValue()
-			BB = False
-			if muon:
-				if abs(eta1) > 2.4 or abs(eta2) > 2.4: continue
-				weight = weightHistMu.GetBinContent(weightHistMu.GetXaxis().FindBin(abs(eta1)),
-								    weightHistMu.GetYaxis().FindBin(pt1)
-				) * weightHistMu.GetBinContent(	    weightHistMu.GetXaxis().FindBin(abs(eta2)),
-								    weightHistMu.GetYaxis().FindBin(pt2))
-				if abs(eta1) < 1.2 and abs(eta2) < 1.2:
-					BB = True
-			else:
-				if abs(eta2) > 2.5 or abs(eta2) > 2.5: continue
-				#~ print pt2
-				#~ print weightHistEle.GetYaxis().FindBin(pt2)
-				weight = weightHistEle.GetBinContent(weightHistEle.GetXaxis().FindBin(abs(eta1)),
-								     weightHistEle.GetYaxis().FindBin(pt1)
-				) * weightHistEle.GetBinContent(     weightHistEle.GetXaxis().FindBin(abs(eta2)),
-								     weightHistEle.GetYaxis().FindBin(pt2))				
-				#~ print weight
-				if abs(eta1) < 1.4442 and abs(eta2) < 1.4442:
-					BB = True
-			if BB:						
-				mass = mass*rand.Gaus(1,getResolution(mass)["sigma"]["BB"])
-			else:
-				mass = mass*rand.Gaus(1,getResolution(mass)["sigma"]["BE"])		
-		result.Fill(mass,weight)
-	result.Sumw2()
-	result.Scale(36300*xsec/100000)
-	return deepcopy(result)
-
-
-# get mass distribution of ADD files
-def getMassDistroSignal(name, mass, label):
-	
-	massBins = ["M120To200", "M200To400", "M400To800", "M800To1400", "M1400To2300",
-		    "M2300To3500", "M3500To4500", "M4500To6000", "M6000ToInf"]
-	
-	result = TH1F("h_%s"%name,"h_%s"%name,240,0,12000)
-	
-	for massBin in massBins:
-		result.Add(getMassHisto("ADDdata/ADD_LambdaT%d_%s_%s_13TeV-pythia8_cff_1.root"%(mass,label,massBin)))
-	
-	result.Scale(0.333333)
-	return result
-
-
-# get mass distribution from DY files	
-def getMassDistroDY():
-	
-	massBins = ["M120To200", "M200To400", "M400To800", "M800To1400", "M1400To2300",
-		    "M2300To3500", "M3500To4500", "M4500To6000", "M6000ToInf"]
-	
-	result = TH1F("h_DY","h_DY",240,0,12000)
-	
-	if (muon): leptype = "MuMu"
-	else: leptype = "EE"
-
-	for massBin in massBins:
-		result.Add(getMassHisto("ADDdata/DYTo%s_%s_13TeV-pythia8_cff_1.root"%(leptype, massBin)))
-	
-	return result
-
+from readData import getMassDistroDY, getMassDistro
 
 # write datacards based on
-# sigYield = ADD + DY
+# sigYield = ADD - DY
 # dyYield = DY event yield only
-def writeDatacard(sigYield, dyYield, lambdaT, Mmin, label):
+def writeDatacard(model, sigYield, dyYield, lambdaT, Mmin, label):
 	
-	fname = "dataCards/ee_singlebin_%s/dataCard_ee_lambda%d_Mmin%d.txt"%(label, lambdaT,Mmin)
+	outDir = "%sdataCards/ee_signif_min%d%s/"%(model, Mmin, label)
+	if not os.path.exists(outDir):
+                os.makedirs(outDir)
+
+	fname = outDir + "dataCard_ee_lambda%d_singlebin.txt"%lambdaT
 	fout = open(fname, "w")
-	fout.write(template%(sigYield, dyYield))   # For significance, data=ADD+DY
+	fout.write(template%(sigYield, dyYield))
 	fout.close()
 	return fname
 
 
-# execute datacard, not valid yet
-def executeDatacard(fname, lambdaT, minmass, label):
+# execute datacards
+# and move them to /dataCards
+def executeDatacard(model, fname, lambdaT, Mmin, label):
 
-	combine_command = "combine -M Significance %s -t -1 -m %d -n %d --expectSignal=1"%(fname, lambdaT, minmass)
+	combine_command = "combine -M Significance %s -t -1 -m %d -n %d --expectSignal=1"%(fname, lambdaT, Mmin)
 	print ">>> command: " + combine_command
 
 	p = subprocess.Popen(combine_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -153,68 +65,74 @@ def executeDatacard(fname, lambdaT, minmass, label):
 	print ">>> higgsCombine rootfile created"
 	retval = p.wait()
 
-	rf = "higgsCombine%d.Significance.mH%d.root"%(minmass, lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./dataCards/ee_singlebin_%s/%s"%(rf, label, rf), shell=True)
+	rf = "higgsCombine%d.Significance.mH%d.root"%(Mmin, lambdaT)
+	mvfile = subprocess.Popen("mv ./%s ./%sdataCards/ee_signif_min%d%s/%s"%(rf, model, Mmin, label, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 
 
 # plot invariant mass spectrum for a single lambdaT
-def getSignificance(label):
+# write datacards, and execute datacards
+def main(argv):
 
-	lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-	# lambdas = [4000]
-	signalHists = []
+	# read in parameters
+	model = argv[0]
+	Mmin = float(argv[1])
+	
+	if model == "ADD": 
+		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+		heli = ["_Con", "_Des"]
+	else: 
+		lambdas = [16, 22, 28, 32, 40]
+		heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
 
-	# read in histograms
-	# and scale (1/binwidth)	
+	# read raw data histograms
+	# and DY histograms
+	sigHists = []  # sigHists[lambdaT][helicity]
 	for lambdaT in lambdas:
-		signalHist = getMassDistroSignal(str(lambdaT), lambdaT, label)
-		signalHist.Scale(0.02)
-		signalHists.append(signalHist)
-		print ">>> Finished reading lambda = %d"%lambdaT
-	dyHist = getMassDistroDY()
-	dyHist.Scale(0.02)
+		sigHists.append(getMassDistro(model, heli, lambdaT, isMuon))
+	#	if model == "ADD": sigHists.append(getMassDistroADD(lambdaT, isMuon))
+	#	if model == "CI": sigHists.append(getMassDistroCI(lambdaT, isMuon))
+	dyHist = getMassDistroDY(isMuon)
 
 	# read event yield from mass spectrum
 	# above a minimum mass Mmin
-	Mmin = [1200 + i * 100 for i in range(25)]
-	dyNum = [0]*len(Mmin)
-	sigNum = []
-	for i in range(len(Mmin)): sigNum.append([0]*len(lambdas))
-	bw = dyHist.GetBinWidth(1)
-
-	for mm in range(len(Mmin)):
-		for bini in range(1, dyHist.GetSize()-1):
-			if (dyHist.GetBinCenter(bini) > 3900):
-				break
-			if (dyHist.GetBinCenter(bini) < Mmin[mm]):
-				continue
-			dyNum[mm] += dyHist.GetBinContent(bini) * bw
-			for (i, histi) in enumerate(signalHists):
-				sigNum[mm][i] += histi.GetBinContent(bini) * bw
+	# Mmin = argv[0]
+	dyNum = [0]*len(lambdas)     # DY yield
+	hhNum = []		     # hhNum[lambdaT][helicity]
+	for i in range(len(lambdas)): 
+		hhNum.append([0]*len(heli)) 
+	
+	Mmax = 10000
+	for i in range(len(lambdas)):
+		if model == "ADD": Mmax = lambdas[i]
+		dyNum[i] = dyHist.Integral(dyHist.FindBin(Mmin), dyHist.FindBin(Mmax))
+		for j in range(len(heli)):
+			hhNum[i][j] = sigHists[i][j].Integral(sigHists[i][j].FindBin(Mmin), sigHists[i][j].FindBin(Mmax))
+		#conNum[i] = sigCon[i].Integral(sigCon[i].FindBin(Mmin), sigCon[i].FindBin(Mmax))
+		#desNum[i] = sigDes[i].Integral(sigDes[i].FindBin(Mmin), sigDes[i].FindBin(Mmax))
 
 	# print information
 	# and execute datacards
-	for mm in range(len(Mmin)):
-		print "-----------------------------------"
-		print ">>> Min mass cut: %f GeV"%Mmin[mm]
-		print ">>> DY event yield: %f"%dyNum[mm]
-		for i in range(len(lambdas)):
-			print ">>> Signal lambda %d event yield: %f"%(lambdas[i], sigNum[mm][i])
-		print "-----------------------------------"
-		
-		for i in range(len(lambdas)):
-			fname = writeDatacard(sigNum[mm][i], dyNum[mm], lambdas[i], Mmin[mm], label)
-			executeDatacard(fname, lambdas[i], Mmin[mm], label)
+	print "-----------------------------------"
+	print ">>> Min mass cut: %f GeV"%Mmin
+	for i in range(len(lambdas)):
+		print ">>> DY event yield: %f"%dyNum[i]
+		print ">>> %s model lambda %d event yield:"%(model, lambdas[i])
+		print hhNum[i]
+	print "-----------------------------------"
+	
+	for i in range(len(lambdas)):
+		#fcon = writeDatacard(model, conNum[i], dyNum[i], lambdas[i], Mmin, "Con")
+		#fdes = writeDatacard(model, desNum[i], dyNum[i], lambdas[i], Mmin, "Des")
+		#executeDatacard(model, fcon, lambdas[i], Mmin, "Con")
+		#executeDatacard(model, fdes, lambdas[i], Mmin, "Des")
+		for j in range(len(heli)):
+			fout = writeDatacard(model, hhNum[i][j], dyNum[i], lambdas[i], Mmin, heli[j])
+			executeDatacard(model, fout, lambdas[i], Mmin, heli[j])
 	print ">>> Done!"
-
-
-def main():
-	getSignificance("Con")
-	getSignificance("Des")
 
 
 # MAIN
 if __name__ == "__main__":
-	main()
+	main(sys.argv[1:])
