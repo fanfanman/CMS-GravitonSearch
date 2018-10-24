@@ -143,6 +143,7 @@ def main(argv):
     if model == "ADD":
         lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
         heli = ["_Con", "_Des"]
+	# heli = [""]
     else:
         lambdas = [16, 22, 28, 32, 40]
         heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]

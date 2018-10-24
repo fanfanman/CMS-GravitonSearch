@@ -32,8 +32,8 @@ def getLimits(file_name):
 def getCross(Mmin, label):
  
     lambdas = [6000, 7000]
-    limit1 = getLimits("./dataCards/ee_limit_min%d_%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 6000))
-    limit2 = getLimits("./dataCards/ee_limit_min%d_%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 7000))
+    limit1 = getLimits("./ADDdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 6000))
+    limit2 = getLimits("./ADDdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 7000))
     cross = [0.0]*5
     for j in range(5):
         # y1 = a x1 + b, y2 = a x2 + b
@@ -47,7 +47,7 @@ def getCross(Mmin, label):
 # plot limit vs Mmin
 def plotLimits(label):
 
-    Mmin = [2600, 2700, 2800, 2900, 3000, 3100, 3200]
+    Mmin = [1200 + i * 100 for i in range(21)]
     N = len(Mmin)
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
@@ -81,7 +81,7 @@ def plotLimits(label):
     c.SetTicky(0)
     c.SetGrid()
     c.cd()
-    frame = c.DrawFrame(2600, 5.5, 3200, 8.5)
+    frame = c.DrawFrame(Mmin[0], 5.0, Mmin[-1], 8.5)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)
@@ -130,15 +130,15 @@ def plotLimits(label):
     legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
     legend.Draw()
 
-    c.SaveAs("limits/Limit_ee_LimitVsMmin_%s.png"%label)
+    c.SaveAs("ADDlimits/ADDLimit_ee_LimitVsMmin_%s.png"%label)
     c.Close()
 
  
 # MAIN
 def main():
-    plotLimits("Con")
-    plotLimits("Des")
- 
+    #plotLimits("Con")
+    #plotLimits("Des")
+    plotLimits("")
  
 if __name__ == '__main__':
     main()
