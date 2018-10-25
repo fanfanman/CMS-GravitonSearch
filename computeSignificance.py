@@ -5,6 +5,7 @@ from copy import deepcopy
 import sys, os
 import ratios
 import subprocess
+import numpy as np
 rand = TRandom3()
 
 ## Initialization
@@ -41,11 +42,11 @@ from readData import getMassDistroDY, getMassDistro
 # dyYield = DY event yield only
 def writeDatacard(model, sigYield, dyYield, lambdaT, Mmin, label):
 	
-	outDir = "%sdataCards/ee_signif_min%d%s/"%(model, Mmin, label)
+	outDir = "%sdataCards/ee_signif%s/"%(model, label)
 	if not os.path.exists(outDir):
                 os.makedirs(outDir)
 
-	fname = outDir + "dataCard_ee_lambda%d_singlebin.txt"%lambdaT
+	fname = outDir + "dataCard_ee_lambda%d_Mmin%d.txt"%(lambdaT, Mmin)
 	fout = open(fname, "w")
 	fout.write(template%(sigYield, dyYield))
 	fout.close()
@@ -66,7 +67,7 @@ def executeDatacard(model, fname, lambdaT, Mmin, label):
 	retval = p.wait()
 
 	rf = "higgsCombine%d.Significance.mH%d.root"%(Mmin, lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./%sdataCards/ee_signif_min%d%s/%s"%(rf, model, Mmin, label, rf), shell=True)
+	mvfile = subprocess.Popen("mv ./%s ./%sdataCards/ee_signif%s/%s"%(rf, model, label, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 
@@ -77,7 +78,7 @@ def main(argv):
 
 	# read in parameters
 	model = argv[0]
-	Mmin = float(argv[1])
+	# Mmin = float(argv[1])
 	
 	if model == "ADD": 
 		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
@@ -91,45 +92,43 @@ def main(argv):
 	sigHists = []  # sigHists[lambdaT][helicity]
 	for lambdaT in lambdas:
 		sigHists.append(getMassDistro(model, heli, lambdaT, isMuon))
-	#	if model == "ADD": sigHists.append(getMassDistroADD(lambdaT, isMuon))
-	#	if model == "CI": sigHists.append(getMassDistroCI(lambdaT, isMuon))
 	dyHist = getMassDistroDY(isMuon)
 
 	# read event yield from mass spectrum
 	# above a minimum mass Mmin
 	# Mmin = argv[0]
-	dyNum = [0]*len(lambdas)     # DY yield
-	hhNum = []		     # hhNum[lambdaT][helicity]
-	for i in range(len(lambdas)): 
-		hhNum.append([0]*len(heli)) 
+	#dyNum = [0]*len(lambdas)     # DY yield
+	#hhNum = []		     # hhNum[lambdaT][helicity]
+	Mmins = [1200 + i * 100 for i in range(21)]
+	dyNum = np.zeros((len(Mmins), len(lambdas)))
+	hhNum = np.zeros((len(Mmins), len(lambdas), len(heli)))
+	#for i in range(len(lambdas)): 
+	#	hhNum.append([0]*len(heli)) 
 	
 	Mmax = 10000
-	for i in range(len(lambdas)):
-		if model == "ADD": Mmax = lambdas[i]
-		dyNum[i] = dyHist.Integral(dyHist.FindBin(Mmin), dyHist.FindBin(Mmax))
-		for j in range(len(heli)):
-			hhNum[i][j] = sigHists[i][j].Integral(sigHists[i][j].FindBin(Mmin), sigHists[i][j].FindBin(Mmax))
-		#conNum[i] = sigCon[i].Integral(sigCon[i].FindBin(Mmin), sigCon[i].FindBin(Mmax))
-		#desNum[i] = sigDes[i].Integral(sigDes[i].FindBin(Mmin), sigDes[i].FindBin(Mmax))
+	for m in range(len(Mmins)):
+		for i in range(len(lambdas)):
+			if model == "ADD": Mmax = lambdas[i]
+			dyNum[m][i] = dyHist.Integral(dyHist.FindBin(Mmins[m]), dyHist.FindBin(Mmax))
+			for j in range(len(heli)):
+				hhNum[m][i][j] = sigHists[i][j].Integral(sigHists[i][j].FindBin(Mmins[m]), sigHists[i][j].FindBin(Mmax))
 
 	# print information
 	# and execute datacards
-	print "-----------------------------------"
-	print ">>> Min mass cut: %f GeV"%Mmin
-	for i in range(len(lambdas)):
-		print ">>> DY event yield: %f"%dyNum[i]
-		print ">>> %s model lambda %d event yield:"%(model, lambdas[i])
-		print hhNum[i]
-	print "-----------------------------------"
+	for m in range(len(Mmins)):
+		print "-----------------------------------"
+		print ">>> Min mass cut: %f GeV"%Mmins[m]
+		for i in range(len(lambdas)):
+			print ">>> DY event yield: %f"%dyNum[m][i]
+			print ">>> %s model lambda %d event yield:"%(model, lambdas[i])
+			print hhNum[m][i]
+		print "-----------------------------------"
 	
-	for i in range(len(lambdas)):
-		#fcon = writeDatacard(model, conNum[i], dyNum[i], lambdas[i], Mmin, "Con")
-		#fdes = writeDatacard(model, desNum[i], dyNum[i], lambdas[i], Mmin, "Des")
-		#executeDatacard(model, fcon, lambdas[i], Mmin, "Con")
-		#executeDatacard(model, fdes, lambdas[i], Mmin, "Des")
-		for j in range(len(heli)):
-			fout = writeDatacard(model, hhNum[i][j], dyNum[i], lambdas[i], Mmin, heli[j])
-			executeDatacard(model, fout, lambdas[i], Mmin, heli[j])
+	for m in range(len(Mmins)):
+		for i in range(len(lambdas)):
+			for j in range(len(heli)):
+				fout = writeDatacard(model, hhNum[m][i][j], dyNum[m][i], lambdas[i], Mmins[m], heli[j])
+				executeDatacard(model, fout, lambdas[i], Mmins[m], heli[j])
 	print ">>> Done!"
 
 

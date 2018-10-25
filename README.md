@@ -1,29 +1,30 @@
-## CMS Non-resonant search ADD model (README needs further change)
+## CMS Non-resonant search ADD model
 - The non-resonance excess search in dilepton mass spectrum in the CMS detector
 - ADD (virtual graviton) and CI (virtual preon) models
 
 ### Organization
 - Programs starting with "plot" are used to plot graphs
 - Programs starting with "compute" are used to compute significance or limit
-- Source DY and ADD mass spectra are stored in `ADDdata/` and `CIdata/` (which are too large so I didn't commit them)
-- Data Cards for Combine are stored in `dataCards/`
-- Plots of source data distributions are stored in `rawDataPlots/`
-- Measurement plots of limits are stored in `limits/`
+- `ADDdata/` and `CIdata/` store source DY and ADD mass spectra (which are too large so I didn't commit them)
+- `ADDdataCards/` and `CIdataCards/` store datacards for Combine
+- `ADDlimits/` and `CIlimits/` store measurements of limits and significances for each model
+- `rawDataPlots/` stores raw data distributions, including event kinematics
 
 ### Limit study
-Commands to measure the limit of ADD signal:
+Commands to measure the limit of ADD signal: (for CI, replace ADD with CI in cmd)
 ```
-python computeLimit.py
-python plotLimit.py
+python computeLimit.py ADD 2800
+python plotLimit.py ADD 2800
 ```
-Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV) to Mmax (\Lambda), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT` in the `computeLimit.py` automatically. And the `plotLimit.py` program will read measured limits for each lambda value, and plot a result.
+Where `computeLimit.py` will read source data, calculate the integrals (event yield) from Mmin (2.8 TeV, or replace it with other values) to Mmax (\Lambda for ADD and 10000 for CI), and write datacards as signal = ADD - DY, and background = DY. The limits are calculated by `combine -M AsymptoticLimits <datacard> -m lambdaT` in the `computeLimit.py` automatically. And the `plotLimit.py` program will read measured limits for each lambda value, and plot a result.
 
 ### Significance study
 Commands to measure the significance of ADD signal:
 ```
-python computeSignificance.py
-python plotSignificance.py
+python computeSignificance.py ADD
+python plotSignificance.py ADD
 ```
+The programs will read source data, calculate significances by `combine -M Significance <datacard> -t -1 -m lambda -n Mmin --expectSignal=1` automatically for a range of minimum cuts from 1200 to 3200, and plot significance Vs Mmin for each helicity.
 
 ### Some notes:
 1. Mass histograms need to be scaled by:
@@ -46,4 +47,4 @@ python plotSignificance.py
 
 ### Update Oct 24th
 - Adapted most of the codes to include both CI and ADD files
-- Currently inclusive programs are computeLimit.py, computeSignificance.py, and plotMassSingle.py, will need to adapt the others
+- Currently inclusive programs are computeLimit.py, computeSignificance.py, plotMassSingle.py, plotLimit.py, plotSignificance.py, will need to adapt the others
