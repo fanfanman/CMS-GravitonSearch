@@ -43,8 +43,13 @@ The programs will read source data, calculate significances by `combine -M Signi
 ### Update Oct 21st
 - Computed Collins-Angle for DY and DY+ADD. But Collins-Angle for ADD is nan because there's phi = 0 for each bosonP4
 - Plotted limit Vs. Mmin. The effect of choices of Mmin is negligible
-- Plotted Significance Vs. Mmin. The significance of signals with Lambda = 7~10 are almost the same.
+- Plotted Significance Vs. Mmin for ADD. The significance of signals with Lambda = 7~10 are almost the same.
 
 ### Update Oct 24th
 - Adapted most of the codes to include both CI and ADD files
 - Currently inclusive programs are computeLimit.py, computeSignificance.py, plotMassSingle.py, plotLimit.py, plotSignificance.py, will need to adapt the others
+
+### Update Oct 28th
+- Computed limit for CI model. Matches with Jan's result.
+- Adapted all codes to be able to study on both models.
+- Plotted Significance Vs. Mmin for CI, will need further interpretation about the stats.
