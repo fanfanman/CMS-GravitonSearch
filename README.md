@@ -53,3 +53,8 @@ The programs will read source data, calculate significances by `combine -M Signi
 - Computed limit for CI model. Matches with Jan's result.
 - Adapted all codes to be able to study on both models.
 - Plotted Significance Vs. Mmin for CI, will need further interpretation about the stats.
+
+### Update Nov 3rd
+- Updated the function to calculate the parameter which lets limit = 1 (when f(lambda)=1).
+- Updated function to plot Limit Vs. Mmin, to adapt to two models
+- Found one issue with simulated sample xsec, which makes some event yield larger than expected, but which luckily is not affecting the limit calculation.
