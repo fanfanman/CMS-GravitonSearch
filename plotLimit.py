@@ -27,7 +27,7 @@ def getLimits(file_name):
         # print ">>>   %.2f" % limits[-1]
  
     return limits[:6]
- 
+
  
 # PLOT upper limits
 def plotUpperLimits(model, lambdas, helicity, Mmin):
@@ -142,8 +142,8 @@ def main(argv):
 
     if model == "ADD":
         lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-        heli = ["_Con", "_Des"]
-	# heli = [""]
+        # heli = ["_Con", "_Des"]
+	heli = [""]
     else:
         lambdas = [16, 22, 28, 32, 40]
         heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]

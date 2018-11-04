@@ -271,7 +271,7 @@ def getMassDistro(model, heli, lambdaT, isMuon):
 
 	retlist = []
 	for helicity in heli:
-		retlist.append(getMassDistroSignal(model+helicity, model, lambdaT, helicity, isMuon).Clone())
+		retlist.append(getMassDistroSignal(model+str(lambdaT)+helicity, model, lambdaT, helicity, isMuon).Clone())
 	return retlist
 
 

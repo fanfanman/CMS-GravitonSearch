@@ -1,6 +1,6 @@
 import ROOT
 from ROOT import TFile, TTree, TCanvas, TGraph, TMultiGraph, TGraphErrors, TLegend
-import CMS_lumi, tdrstyle
+import CMS_lumi, tdrstyle, sys
 import subprocess # to execute shell command
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
  
@@ -29,23 +29,38 @@ def getLimits(file_name):
  
  
 # calculate limit +- 1,2 sigma
-def getCross(Mmin, label):
+def getCross(Mmin, model, lambdas, helicity):
  
-    lambdas = [6000, 7000]
-    limit1 = getLimits("./ADDdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 6000))
-    limit2 = getLimits("./ADDdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(Mmin, label, 7000))
-    cross = [0.0]*5
-    for j in range(5):
-        # y1 = a x1 + b, y2 = a x2 + b
-        a = (limit2[j] - limit1[j]) / 1.0
-        b = limit2[j] - a * 7
-        cross[j] = (1 - b) / a
+    limits = []
+    for lambdaT in lambdas:
+        templimit = getLimits("./%sdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, Mmin, helicity, lambdaT))
+        limits.append(templimit)
 
+    # limits = [lim4, lim5, lim6...]
+    cross = [0.0]*5
+    if model == "ADD":
+        lambdas = [i/1000 for i in lambdas]
+
+    for j in range(5):
+        if limits[0][j] >= 1.0:
+            cross[j] = limits[0][j]
+            continue
+        # y1 = a x1 + b, y2 = a x2 + b
+        for k in range(len(lambdas)-1):
+            if limits[k][j] < 1.0 and limits[k+1][j] >= 1.0:
+                y2 = limits[k+1][j]
+                y1 = limits[k][j]
+                x2 = lambdas[k+1]
+                x1 = lambdas[k]
+                a = (y2 - y1)*1.0 / (x2 - x1)
+                b = y2 - a * x2
+                cross[j] = (1.0 - b) / a
+                continue; continue
     return cross
 
 
 # plot limit vs Mmin
-def plotLimits(label):
+def plotLimits(model, lambdas, helicity):
 
     Mmin = [1200 + i * 100 for i in range(21)]
     N = len(Mmin)
@@ -54,8 +69,8 @@ def plotLimits(label):
     median = TGraph(N)      # median
     
     for i in range(N):
-        limit = getCross(Mmin[i], label)
-        print Mmin[i], limit[2]
+        limit = getCross(Mmin[i], model, lambdas, helicity)
+        print Mmin[i], limit[0], limit[1], limit[2], limit[3], limit[4]
         yellow.SetPoint(    i,    Mmin[i], limit[4]) # + 2 sigma
         green.SetPoint(     i,    Mmin[i], limit[3]) # + 1 sigma
         median.SetPoint(    i,    Mmin[i], limit[2]) # median
@@ -81,7 +96,10 @@ def plotLimits(label):
     c.SetTicky(0)
     c.SetGrid()
     c.cd()
-    frame = c.DrawFrame(Mmin[0], 5.0, Mmin[-1], 8.5)
+    if model == "ADD":
+        frame = c.DrawFrame(Mmin[0], 4.5, Mmin[-1], 8.5)
+    else:
+        frame = c.DrawFrame(Mmin[0], 16, Mmin[-1], 45)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)
@@ -90,8 +108,7 @@ def plotLimits(label):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
-    #frame.GetYaxis().SetTitle("95% upper limit on #sigma #times BR / (#sigma #times BR)_{SM}")
+    frame.GetYaxis().SetTitle("95% limit of signal")
     frame.GetXaxis().SetTitle("#M_{min} (GeV)")
     #frame.SetMinimum(0)
     #frame.SetMaximum(max(up2s)*1.05)
@@ -116,29 +133,37 @@ def plotLimits(label):
     ROOT.gPad.SetTicks(1,1)
     frame.Draw('sameaxis')
  
-    x1 = 0.15
+    x1 = 0.42
     x2 = x1 + 0.24
-    y2 = 0.76
-    y1 = 0.60
+    y2 = 0.86
+    y1 = 0.70
     legend = TLegend(x1,y1,x2,y2)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
     legend.SetTextSize(0.041)
     legend.SetTextFont(42)
-    legend.AddEntry(median, "Asymptotic CL_{s} expected %s"%label,'L')
+    legend.AddEntry(median, "Asymptotic CL_{s} expected of %s%s"%(model, helicity),'L')
     legend.AddEntry(green, "#pm 1 std. deviation",'f')
     legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
     legend.Draw()
 
-    c.SaveAs("ADDlimits/ADDLimit_ee_LimitVsMmin_%s.png"%label)
+    c.SaveAs("%slimits/%sLimit_ee_LimitVsMmin%s.png"%(model, model, helicity))
     c.Close()
 
  
 # MAIN
-def main():
-    #plotLimits("Con")
-    #plotLimits("Des")
-    plotLimits("")
+def main(argv):
+    
+    model = argv[0]
+    if model == "ADD":
+        lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+        heli = [""]
+    else:
+        lambdas = [16, 22, 28, 32, 40]
+        heli = ["_ConLL", "_ConLR", "_ConRR"] #, "_DesLL", "_DesLR", "_DesRR"]
+
+    for helicity in heli:
+        plotLimits(model, lambdas, helicity)
  
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])

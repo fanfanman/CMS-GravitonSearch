@@ -5,6 +5,7 @@ from copy import deepcopy
 import sys, os
 import ratios
 import subprocess
+import numpy as np
 rand = TRandom3()
 
 ## Initialization
@@ -98,18 +99,16 @@ def main(argv):
 	# above a minimum mass Mmin
 	# Mmin = argv[0]
 	dyNum = [0]*len(lambdas)     # DY yield
-	hhNum = []		     # hhNum[lambdaT][helicity]
-	for i in range(len(lambdas)): 
-		hhNum.append([0]*len(heli)) 
-	
+	hhNum = np.zeros((len(lambdas), len(heli))) 	# hhNum[lambdaT][helicity]
+	#for i in range(len(lambdas)): 
+	#	hhNum.append([0]*len(heli)) 
+
 	Mmax = 10000
 	for i in range(len(lambdas)):
 		if model == "ADD": Mmax = lambdas[i]
 		dyNum[i] = dyHist.Integral(dyHist.FindBin(Mmin), dyHist.FindBin(Mmax))
 		for j in range(len(heli)):
 			hhNum[i][j] = sigHists[i][j].Integral(sigHists[i][j].FindBin(Mmin), sigHists[i][j].FindBin(Mmax))
-		#conNum[i] = sigCon[i].Integral(sigCon[i].FindBin(Mmin), sigCon[i].FindBin(Mmax))
-		#desNum[i] = sigDes[i].Integral(sigDes[i].FindBin(Mmin), sigDes[i].FindBin(Mmax))
 
 	# print information
 	# and execute datacards
@@ -122,10 +121,6 @@ def main(argv):
 	print "-----------------------------------"
 	
 	for i in range(len(lambdas)):
-		#fcon = writeDatacard(model, conNum[i], dyNum[i], lambdas[i], Mmin, "Con")
-		#fdes = writeDatacard(model, desNum[i], dyNum[i], lambdas[i], Mmin, "Des")
-		#executeDatacard(model, fcon, lambdas[i], Mmin, "Con")
-		#executeDatacard(model, fdes, lambdas[i], Mmin, "Des")
 		for j in range(len(heli)):
 			fout = writeDatacard(model, hhNum[i][j], dyNum[i], lambdas[i], Mmin, heli[j])
 			executeDatacard(model, fout, lambdas[i], Mmin, heli[j])
