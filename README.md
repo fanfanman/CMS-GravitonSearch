@@ -58,3 +58,7 @@ The programs will read source data, calculate significances by `combine -M Signi
 - Updated the function to calculate the parameter which lets limit = 1 (when f(lambda)=1).
 - Updated function to plot Limit Vs. Mmin, to adapt to two models
 - Found one issue with simulated sample xsec, which makes some event yield larger than expected, but which luckily is not affecting the limit calculation.
+
+### Update Nov 21st
+- Added `computeLimitMultibin.py` to support multibin analysis
+- Added `compareLimit.py` to compare limits calculated from different binning options
