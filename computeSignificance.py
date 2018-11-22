@@ -48,7 +48,7 @@ def writeDatacard(model, sigYield, dyYield, lambdaT, Mmin, label):
 
 	fname = outDir + "dataCard_ee_lambda%d_Mmin%d.txt"%(lambdaT, Mmin)
 	fout = open(fname, "w")
-	fout.write(template%(sigYield, dyYield))
+	fout.write(template%(sigYield-dyYield, dyYield))
 	fout.close()
 	return fname
 
@@ -82,7 +82,8 @@ def main(argv):
 	
 	if model == "ADD": 
 		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-		heli = ["_Con", "_Des"]
+		#heli = ["_Con", "_Des"]
+		heli = [""]
 	else: 
 		lambdas = [16, 22, 28, 32, 40]
 		heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
@@ -99,7 +100,8 @@ def main(argv):
 	# Mmin = argv[0]
 	#dyNum = [0]*len(lambdas)     # DY yield
 	#hhNum = []		     # hhNum[lambdaT][helicity]
-	Mmins = [1200 + i * 100 for i in range(21)]
+	#Mmins = [1200 + i * 100 for i in range(21)]
+	Mmins = [100 + i * 100 for i in range(40)]
 	dyNum = np.zeros((len(Mmins), len(lambdas)))
 	hhNum = np.zeros((len(Mmins), len(lambdas), len(heli)))
 	#for i in range(len(lambdas)): 

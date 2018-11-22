@@ -39,7 +39,7 @@ def plotUpperLimits(model, lambdas, helicity):
     #green = TGraph(2*N)     # green band
     #median = TGraph(N)      # median line
  
-    Mmin = [1200 + i*100 for i in range(21)]
+    Mmin = [100 + i*100 for i in range(40)]
     graphs = []
     for i in range(N):
         thislam = TGraph(len(Mmin))
@@ -80,7 +80,9 @@ def plotUpperLimits(model, lambdas, helicity):
     c.SetTicky(0)
     c.SetGrid()
     c.cd()
-    frame = c.DrawFrame(1100,0.1,3300, 25)
+    if model == "ADD": frame = c.DrawFrame(100, 0.01, 4000, 22)
+    elif "Con" in helicity: frame = c.DrawFrame(100,0.01,4000, 15)
+    else: frame = c.DrawFrame(100, 0.01, 4000, 10)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)
@@ -118,10 +120,10 @@ def plotUpperLimits(model, lambdas, helicity):
     ROOT.gPad.SetTicks(1,1)
     frame.Draw('sameaxis')
  
-    x1 = 0.15
+    x1 = 0.75
     x2 = x1 + 0.24
-    y2 = 0.46
-    y1 = 0.20
+    y2 = 0.86
+    y1 = 0.60
     legend = TLegend(x1,y1,x2,y2)
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
@@ -148,7 +150,8 @@ def main(argv):
 
     if model == "ADD":
         lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-        heli = ["_Con", "_Des"]
+        #heli = ["_Con", "_Des"]
+        heli = [""]
     else:
         lambdas = [16, 22, 28, 32, 40]
         heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]

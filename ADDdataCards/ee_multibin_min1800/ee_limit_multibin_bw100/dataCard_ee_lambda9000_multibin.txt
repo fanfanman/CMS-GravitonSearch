@@ -1,0 +1,15 @@
+# Simple counting experiment, with one signal and one background
+imax 31  number of channels
+jmax 1  number of backgrounds
+kmax 1  number of nuisance parameters (sources of systematical uncertainties)
+------------
+# we have 31 channels, in which we observe 0 events
+     bin  bin0 bin1 bin2 bin3 bin4 bin5 bin6 bin7 bin8 bin9 bin10 bin11 bin12 bin13 bin14 bin15 bin16 bin17 bin18 bin19 bin20 bin21 bin22 bin23 bin24 bin25 bin26 bin27 bin28 bin29 bin30
+observation  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+--------------- 
+     bin 	 bin0 bin0	 bin1 bin1	 bin2 bin2	 bin3 bin3	 bin4 bin4	 bin5 bin5	 bin6 bin6	 bin7 bin7	 bin8 bin8	 bin9 bin9	 bin10 bin10	 bin11 bin11	 bin12 bin12	 bin13 bin13	 bin14 bin14	 bin15 bin15	 bin16 bin16	 bin17 bin17	 bin18 bin18	 bin19 bin19	 bin20 bin20	 bin21 bin21	 bin22 bin22	 bin23 bin23	 bin24 bin24	 bin25 bin25	 bin26 bin26	 bin27 bin27	 bin28 bin28	 bin29 bin29	 bin30 bin30	
+ process 	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	
+ process 	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	 0    1  	
+    rate 	 0.342624   2.109251 	 0.243488   1.553368 	 0.191610   1.145035 	 0.185656   0.837592 	 0.108167   0.628934 	 0.050047   0.472038 	 0.045406   0.356258 	 0.033378   0.273047 	 0.027618   0.211806 	 0.023559   0.161702 	 0.020107   0.125050 	 0.019020   0.097248 	 0.016391   0.074636 	 0.020104   0.056390 	 0.015861   0.046219 	 0.013436   0.037035 	 0.009944   0.029671 	 0.008138   0.023794 	 0.007512   0.018875 	 0.007595   0.014790 	 0.007243   0.011801 	 0.006479   0.009497 	 0.006466   0.007477 	 0.006086   0.005922 	 0.005916   0.004721 	 0.005545   0.003864 	 0.005036   0.003149 	 0.004558   0.002589 	 0.004288   0.002081 	 0.003903   0.001683 	 0.026179   0.004627 	
+------------ 
+    lumi 	      lnN 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	

@@ -1,0 +1,15 @@
+# Simple counting experiment, with one signal and one background
+imax 4  number of channels
+jmax 1  number of backgrounds
+kmax 1  number of nuisance parameters (sources of systematical uncertainties)
+------------
+# we have 4 channels, in which we observe 0 events
+     bin  bin0 bin1 bin2 bin3
+observation  -1 -1 -1 -1
+--------------- 
+     bin 	 bin0 bin0	 bin1 bin1	 bin2 bin2	 bin3 bin3	
+ process 	 sig  bkg	 sig  bkg	 sig  bkg	 sig  bkg	
+ process 	 0    1  	 0    1  	 0    1  	 0    1  	
+    rate 	 0.266840   4.280337 	 0.189990   1.313250 	 0.079995   0.450938 	 0.071771   0.254308 	
+------------ 
+    lumi 	      lnN 	 1.025   - 	 1.025   - 	 1.025   - 	 1.025   - 	
