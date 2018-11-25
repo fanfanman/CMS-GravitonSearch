@@ -151,8 +151,8 @@ def main(argv):
 	#Mbins = [1200, 1300, 1500, 1900, 2700, 4300, 10000]
 	#Mbins = [1200, 2200, 3200, 4200, 10000]
 	#Mbins = [800, 1300, 1800, 2300, 2800, 3300, 3800, 10000]
-	#Mbins = [1200 + i * 200 for i in range(16)]; Mbins.append(10000)
-	Mbins = [1200 + i * 100 for i in range(31)]; Mbins.append(10000)
+	Mbins = [1200 + i * 200 for i in range(16)]; Mbins.append(10000)
+	#Mbins = [1200 + i * 100 for i in range(31)]; Mbins.append(10000)
 
 	if model == "ADD": 
 		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
