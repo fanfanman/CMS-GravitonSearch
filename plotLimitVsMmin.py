@@ -62,7 +62,7 @@ def getCross(Mmin, model, lambdas, helicity):
 # plot limit vs Mmin
 def plotLimits(model, lambdas, helicity):
 
-    Mmin = [200 + i * 100 for i in range(31)]
+    Mmin = [1200 + i * 100 for i in range(21)]
     N = len(Mmin)
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
