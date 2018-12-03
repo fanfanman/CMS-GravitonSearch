@@ -26,8 +26,8 @@ def getLimits(file_name):
         # print ">>>   %.2f" % limits[-1]
  
     return limits[:6]
- 
- 
+
+
 # calculate limit +- 1,2 sigma
 def getCross(Mmin, model, lambdas, helicity):
  
@@ -42,12 +42,22 @@ def getCross(Mmin, model, lambdas, helicity):
         lambdas = [i/1000 for i in lambdas]
 
     for j in range(5):
-        if limits[0][j] >= 1.0:
-            cross[j] = limits[0][j]
+        crossed = False
+        if limits[0][j] >= 1.0 and limits[1][j] >= 1.0:
+            y2 = limits[1][j]
+            y1 = limits[0][j]
+            x2 = lambdas[1]
+            x1 = lambdas[0]
+            a = (y2 - y1)*1.0 / (x2 - x1)
+            b = y2 - a * x2
+            cross[j] = (1.0 - b) / a
+            crossed = True
             continue
+
+        #crossed = False
         # y1 = a x1 + b, y2 = a x2 + b
         for k in range(len(lambdas)-1):
-            if limits[k][j] < 1.0 and limits[k+1][j] >= 1.0:
+            if not crossed and limits[k][j] <= 1.0 and limits[k+1][j] >= 1.0:
                 y2 = limits[k+1][j]
                 y1 = limits[k][j]
                 x2 = lambdas[k+1]
@@ -55,14 +65,24 @@ def getCross(Mmin, model, lambdas, helicity):
                 a = (y2 - y1)*1.0 / (x2 - x1)
                 b = y2 - a * x2
                 cross[j] = (1.0 - b) / a
-                continue; continue
+                crossed = True
+                continue
+        if not crossed:
+            y2 = limits[-1][j]
+            y1 = limits[-2][j]
+            x2 = lambdas[-1]
+            x1 = lambdas[-2]
+            a = (y2 - y1)*1.0 / (x2 - x1)
+            b = y2 - a * x2
+            cross[j] = (1.0 - b) / a
+
     return cross
 
 
 # plot limit vs Mmin
 def plotLimits(model, lambdas, helicity):
 
-    Mmin = [1200 + i * 100 for i in range(21)]
+    Mmin = [200 + i * 100 for i in range(31)]
     N = len(Mmin)
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
@@ -97,9 +117,9 @@ def plotLimits(model, lambdas, helicity):
     c.SetGrid()
     c.cd()
     if model == "ADD":
-        frame = c.DrawFrame(Mmin[0], 4.5, Mmin[-1], 8.5)
+        frame = c.DrawFrame(Mmin[0], 2, Mmin[-1], 10)
     else:
-        frame = c.DrawFrame(Mmin[0], 16, Mmin[-1], 45)
+        frame = c.DrawFrame(Mmin[0], 2, Mmin[-1], 50)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
     frame.GetXaxis().SetTitleSize(0.05)

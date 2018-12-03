@@ -67,8 +67,8 @@ def compareMethod(model, lambdas, helicity):
     median1 = TGraph(N) # MarkovChainMC
 
     for i in range(N):
-        f0 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_ConLL_bw100/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
-        f1 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_ConLL_bw100/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, lambdas[i], lambdas[i])
+        f0 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw100/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
+        f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw100/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, lambdas[i], lambdas[i])
         limit0 = getLimits(f0)
         limit1 = getLimitsMCMC(f1)
         if model == "ADD":
@@ -143,6 +143,7 @@ def compareMethod(model, lambdas, helicity):
     legend.Draw()
 
     # Here print out the limits for a graph
+    if model == "ADD": lambdas = [i/1000 for i in lambdas]
     n0 = getCross(median0, lambdas)
     n1 = getCross(median1, lambdas)
     print n0, n1
@@ -432,7 +433,7 @@ def compareCIBinning(model, lambdas, helicity):
     legend.SetHeader("mean expected limit of %s"%model)
     #legend.AddEntry(median1, "paper's binning", 'L')
     legend.AddEntry(median1, "geometric binning (paper)", 'L')
-    legend.AddEntry(median0, "linear bw=9600 (singlebin)", "L")
+    legend.AddEntry(median0, "linear bw=8800 (singlebin)", "L")
     legend.AddEntry(median2, "linear bw=1000", 'L')
     legend.AddEntry(median3, "linear bw=500", "L")
     legend.AddEntry(median4, "linear bw=200", "L")
@@ -459,14 +460,13 @@ def main(argv):
     model = argv[0]
 
     if model == "ADD":
-        lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
+        lambdas = [5000, 6000, 7000, 8000, 9000, 10000]
         # heli = ["_Con", "_Des"]
 	heli = [""]
     else:
-        #lambdas = [16, 22, 28, 32, 40]
+        lambdas = [16, 22, 28, 32, 40]
         #heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
     	#heli = ["_ConLL", "_ConLR", "_ConRR"]
-	lambdas = [22, 28, 32, 40]
         heli = ["_ConLL"]
 
     for helicity in heli:

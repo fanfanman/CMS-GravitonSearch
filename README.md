@@ -9,6 +9,7 @@
 - `ADDdataCards/` and `CIdataCards/` store datacards for Combine
 - `ADDlimits/` and `CIlimits/` store measurements of limits and significances for each model
 - `rawDataPlots/` stores raw data distributions, including event kinematics
+- `ADDdataCards_binErr/` and `CIdataCards_binErr/` store datacards with an additional systematic uncertainty from mass
 
 ### Limit study
 Commands to measure the limit of ADD signal: (for CI, replace ADD with CI in cmd)
@@ -61,4 +62,8 @@ The programs will read source data, calculate significances by `combine -M Signi
 
 ### Update Nov 21st
 - Added `computeLimitMultibin.py` to support multibin analysis
-- Added `compareLimit.py` to compare limits calculated from different binning options
+- Added `compareLimit.py` to compare limits calculated from different binning options, and combine methods, for multibin analysis
+
+### Update Dec 3rd
+- Added `plotLimitMCMCVsMmin.py` to compare the Limit Vs Mmin for single bin counting experiments, with AsymptoticLimits or MarkovChainMC method, with or without additional binning uncertainty.
+- Found: the performance of MCMC is slightly better than AsymptoticLimits for around 10%, and the variation of limit over Mmin is probably independent of binning uncertainty.
