@@ -87,9 +87,13 @@ def plotUpperLimits(model, lambdas, helicity, Mmin):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
-    if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
-    else: frame.GetXaxis().SetTitle("#Lambda [CI]")
+    #frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{}")
+    if model == "ADD": 
+        frame.GetYaxis().SetTitle("95% CL limit on #sigma / #sigma_{ADD}")
+        frame.GetXaxis().SetTitle("#Lambda_{T} [ADD]")
+    else: 
+        frame.GetYaxis().SetTitle("95% CL limit on #sigma / #sigma_{CI}")
+        frame.GetXaxis().SetTitle("#Lambda [CI]")
     frame.SetMinimum(0)
     #frame.SetMaximum(max(up2s)*1.05)
     #frame.GetXaxis().SetLimits(min(values),max(values))
@@ -147,7 +151,6 @@ def main(argv):
     else:
         lambdas = [16, 22, 28, 32, 40]
         heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
-    
 
     for helicity in heli:
         plotUpperLimits(model, lambdas, helicity, Mmin)

@@ -1,7 +1,10 @@
 import ROOT
-from ROOT import TFile, TTree, TCanvas, TGraph, TMultiGraph, TGraphErrors, TLegend
+#from ROOT import TFile, TTree, TCanvas, TGraph, TMultiGraph, TGraphErrors, TLegend, TPad
+from ROOT import *
 import CMS_lumi, tdrstyle, sys
+import ratios
 import subprocess # to execute shell command
+from setTDRStyle import setTDRStyle
 ROOT.gROOT.SetBatch(ROOT.kTRUE)
  
 # CMS style
@@ -42,13 +45,14 @@ def getLimitsMCMC(file_name):
     return sum(limits)*1.0/len(limits)
 
 
-def getCrossMCMC(Mmin, model, lambdas, helicity, withErr):
+def getCrossMCMC(Mmin, model, lambdas, helicity):
 
-    limits = []
-    errtag = ""
-    if withErr: errtag = "_binErr"
-    for lambdaT in lambdas:
-        templimit = getLimitsMCMC("./%sdataCards%s/ee_limit_min%d%s/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, errtag, Mmin, helicity, lambdaT, lambdaT))
+    limits = [0.0]
+    if model == "ADD": thislambdas = [5000 + i * 1000 for i in range(6)]
+    else: thislambdas = lambdas
+
+    for lambdaT in thislambdas:
+        templimit = getLimitsMCMC("./%sdataCards/ee_limit_min%d%s/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, Mmin, helicity, lambdaT, lambdaT))
         limits.append(templimit)
     #print limits
 
@@ -89,13 +93,12 @@ def getCrossMCMC(Mmin, model, lambdas, helicity, withErr):
 
 
 # calculate limit +- 1,2 sigma
-def getCross(Mmin, model, lambdas, helicity, withErr):
- 
+def getCross(Mmin, model, lambdas, helicity):
+
     limits = []
-    errtag = ""
-    if withErr: errtag = "_binErr"
+
     for lambdaT in lambdas:
-        templimit = getLimits("./%sdataCards%s/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, errtag, Mmin, helicity, lambdaT))
+        templimit = getLimits("./%sdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, Mmin, helicity, lambdaT))
         limits.append(templimit)
 
     # limits = [lim4, lim5, lim6...]
@@ -139,10 +142,15 @@ def getCross(Mmin, model, lambdas, helicity, withErr):
             cross[j] = (1.0 - b) / a
 
     return cross
+ 
 
-
-# plot limit vs Mmin
-def plotLimits(model, lambdas, helicity):
+# Not needed any more
+# Please don't use this section anymore
+# this section is used to compare limits
+# calculated with or without net
+# systematic uncertainties (numbers from Jan)
+'''
+def plotLimitsASERR(model, lambdas, helicity):
 
     Mmin = [400 + i * 100 for i in range(29)]
     #Mmin = [2100]
@@ -150,10 +158,10 @@ def plotLimits(model, lambdas, helicity):
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
     median = TGraph(N)      # median
-    mcmc = TGraph(N)
+    #mcmc = TGraph(N)
     err_median = TGraph(N)
-    err_mcmc = TGraph(N)
-    
+    #err_mcmc = TGraph(N)
+
     for i in range(N):
         limit = getCross(Mmin[i], model, lambdas, helicity, False)
         print Mmin[i], limit[0], limit[1], limit[2], limit[3], limit[4]
@@ -162,15 +170,153 @@ def plotLimits(model, lambdas, helicity):
         median.SetPoint(    i,    Mmin[i], limit[2]) # median
         green.SetPoint(  2*N-1-i, Mmin[i], limit[1]) # - 1 sigma
         yellow.SetPoint( 2*N-1-i, Mmin[i], limit[0]) # - 2 sigma
+
+    for i in range(N):
+        #limitmcmc = getCrossMCMC(Mmin[i], model, lambdas, helicity, False)
+        limiterr = getCross(Mmin[i], model, lambdas, helicity, True)[2]
+        #limitmcmcerr = getCrossMCMC(Mmin[i], model, lambdas, helicity, True)
+        print Mmin[i], limiterr
+        #mcmc.SetPoint(i, Mmin[i], limitmcmc)
+        err_median.SetPoint(i, Mmin[i], limiterr)
+        #err_mcmc.SetPoint(i, Mmin[i], limitmcmcerr)
+
+    W = 800
+    H  = 600
+    T = 0.08*H
+    B = 0.12*H
+    L = 0.12*W
+    R = 0.04*W
+    c = TCanvas("c","c",100,100, W, H)
+    c.SetFillColor(0)
+    c.SetBorderMode(0)
+    c.SetFrameFillStyle(0)
+    c.SetFrameBorderMode(0)
+    c.SetLeftMargin( L/W )
+    c.SetRightMargin( R/W )
+    c.SetTopMargin( T/H )
+    c.SetBottomMargin( B/H )
+    c.SetTickx(0)
+    c.SetTicky(0)
+    c.SetGrid()
+    c.cd()
+    canv = TCanvas("c1","c1",800,800)
+    plotPad = TPad("plotPad","plotPad",0,0.3,1,1)
+    ratioPad = TPad("ratioPad","ratioPad",0,0,1,0.3)
+    style = setTDRStyle()
+    gStyle.SetOptStat(0)
+    plotPad.UseCurrentStyle()
+    ratioPad.UseCurrentStyle()
+    plotPad.Draw()
+    ratioPad.Draw()
+    plotPad.cd()
+    plotPad.SetLogy()
+    #plotPad.DrawFrame(120,1e-7,7000,2.5e3,";mass [GeV];Events / 50 GeV")
+    if model == "ADD":
+        frame = c.DrawFrame(Mmin[0], 2.8, Mmin[-1], 8)
+	#frame = plotPad.DrawFrame(Mmin[0], 2.8, Mmin[-1], 8)
+    else:
+        frame = c.DrawFrame(Mmin[0], 2, Mmin[-1], 50)
+    frame.GetYaxis().CenterTitle()
+    frame.GetYaxis().SetTitleSize(0.05)
+    frame.GetXaxis().SetTitleSize(0.05)
+    frame.GetXaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetTitleOffset(0.9)
+    frame.GetXaxis().SetNdivisions(508)
+    frame.GetYaxis().CenterTitle(True)
+    frame.GetYaxis().SetTitle("95% limit of #Lambda_{T}")
+    frame.GetXaxis().SetTitle("M_{#font[12]{l}#font[12]{l}}^{min} (GeV)")
+    #frame.SetMinimum(0)
+    #frame.SetMaximum(max(up2s)*1.05)
+    #frame.GetXaxis().SetLimits(min(values),max(values))
+
+    yellow.SetFillColor(ROOT.kOrange)
+    yellow.SetLineColor(ROOT.kOrange)
+    yellow.SetFillStyle(1001)
+    yellow.Draw('F')
+
+    green.SetFillColor(ROOT.kGreen+1)
+    green.SetLineColor(ROOT.kGreen+1)
+    green.SetFillStyle(1001)
+    green.Draw('Fsame')
+
+    median.SetLineColor(1)
+    median.SetLineWidth(2)
+    median.SetLineStyle(2)
+    median.Draw('Lsame')
+
+    err_median.SetLineColor(9)
+    err_median.SetLineWidth(2)
+    err_median.SetLineStyle(2)
+    err_median.Draw("Lsame")
+
+    CMS_lumi.CMS_lumi(c,13,11)
+    ROOT.gPad.SetTicks(1,1)
+    frame.Draw('sameaxis')
+
+    x1 = 0.42
+    x2 = x1 + 0.24
+    y2 = 0.86
+    y1 = 0.70
+    legend = TLegend(x1,y1,x2,y2)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.SetTextSize(0.041)
+    legend.SetTextFont(42)
+    legend.AddEntry(median, "Asymptotic expected w/o BinErr",'L')
+    #legend.AddEntry(green, "#pm 1 std. deviation",'f')
+    #legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
+    legend.AddEntry(err_median, "Asymptotic expected with BinErr", "L")
+    #legend.AddEntry(mcmc, "MarkovChainMC expected w/o BinErr",'L')
+    #legend.AddEntry(err_mcmc, "MarkovChainMC expexted with BinErr", "L")
+    legend.Draw()
+
+    ratioPad.cd()
+    #ratio = ratios.RatioGraph(err_median, median, Mmin[0], Mmin[-1], title="Limit with/without BinErr",
+    #               yMin=0.5,yMax=1.5,ndivisions=10,color=err_median.GetLineColor(),adaptiveBinning=0.25)
+    #ratio.draw(gPad, True, False, True, chi2Pos=0.7)
+    ratioGraph = TGraph(N)
+    for i in range(N):
+        ratioGraph.SetPoint(i, Mmin[i], err_median.Eval(Mmin[i]) / median.Eval(Mmin[i]))
+    ratioGraph.SetLineColor(2)
+    ratioGraph.SetLineWidth(2)
+    ratioGraph.Draw("L")
+
+    c.SaveAs("%slimits/%sLimit_ee_LimitVsMmin%s_ASERR.png"%(model, model, helicity))
+    c.Close()'''
+
+
+
+# plot limit vs Mmin
+def plotLimitsASMCMC(model, lambdas, helicity):
+
+    Mmin = [400 + i * 100 for i in range(29)]
+    if model == "CI": Mmin = [800 + i * 100 for i in range(25)]
+    N = len(Mmin)
+    yellow = TGraph(2*N)    # yellow band
+    green = TGraph(2*N)     # green band
+    median = TGraph(N)      # median
+    mcmc = TGraph(N)
+    #err_median = TGraph(N)
+    #err_mcmc = TGraph(N)
+    
+    for i in range(N):
+        limit = getCross(Mmin[i], model, lambdas, helicity)
+        print Mmin[i], limit[0], limit[1], limit[2], limit[3], limit[4]
+        yellow.SetPoint(    i,    Mmin[i], limit[4]) # + 2 sigma
+        green.SetPoint(     i,    Mmin[i], limit[3]) # + 1 sigma
+        median.SetPoint(    i,    Mmin[i], limit[2]) # median
+        green.SetPoint(  2*N-1-i, Mmin[i], limit[1]) # - 1 sigma
+        yellow.SetPoint( 2*N-1-i, Mmin[i], limit[0]) # - 2 sigma
         
     for i in range(N):
-        limitmcmc = getCrossMCMC(Mmin[i], model, lambdas, helicity, False)
-        limiterr = getCross(Mmin[i], model, lambdas, helicity, True)[2]
-        limitmcmcerr = getCrossMCMC(Mmin[i], model, lambdas, helicity, True)
-        print Mmin[i], limitmcmc, limiterr, limitmcmcerr
+        limitmcmc = getCrossMCMC(Mmin[i], model, lambdas, helicity)
+        #limiterr = getCross(Mmin[i], model, lambdas, helicity, True)[2]
+        #limitmcmcerr = getCrossMCMC(Mmin[i], model, lambdas, helicity, True)
+        print Mmin[i], limitmcmc
         mcmc.SetPoint(i, Mmin[i], limitmcmc)
-        err_median.SetPoint(i, Mmin[i], limiterr)
-        err_mcmc.SetPoint(i, Mmin[i], limitmcmcerr)
+        #err_median.SetPoint(i, Mmin[i], limiterr)
+        #err_mcmc.SetPoint(i, Mmin[i], limitmcmcerr)
 
     W = 800
     H  = 600
@@ -192,7 +338,7 @@ def plotLimits(model, lambdas, helicity):
     c.SetGrid()
     c.cd()
     if model == "ADD":
-        frame = c.DrawFrame(Mmin[0], 2, Mmin[-1], 10)
+        frame = c.DrawFrame(Mmin[0], 2.8, Mmin[-1], 8)
     else:
         frame = c.DrawFrame(Mmin[0], 2, Mmin[-1], 50)
     frame.GetYaxis().CenterTitle()
@@ -203,8 +349,9 @@ def plotLimits(model, lambdas, helicity):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% limit of signal")
-    frame.GetXaxis().SetTitle("#M_{min} (GeV)")
+    frame.GetYaxis().SetTitle("95% limit of #Lambda_{T}")
+    if model == "CI": frame.GetYaxis().SetTitle("95% limit of #Lambda")
+    frame.GetXaxis().SetTitle("M_{#font[12]{l}#font[12]{l}}^{min} (GeV)")
     #frame.SetMinimum(0)
     #frame.SetMaximum(max(up2s)*1.05)
     #frame.GetXaxis().SetLimits(min(values),max(values))
@@ -229,16 +376,6 @@ def plotLimits(model, lambdas, helicity):
     mcmc.SetLineStyle(2)
     mcmc.Draw("Lsame")
 
-    err_median.SetLineColor(9)
-    err_median.SetLineWidth(2)
-    err_median.SetLineStyle(2)
-    err_median.Draw("Lsame")
-
-    err_mcmc.SetLineColor(6)
-    err_mcmc.SetLineWidth(2)
-    err_mcmc.SetLineStyle(2)
-    err_mcmc.Draw("Lsame")
-
     CMS_lumi.CMS_lumi(c,13,11)
     ROOT.gPad.SetTicks(1,1)
     frame.Draw('sameaxis')
@@ -252,15 +389,13 @@ def plotLimits(model, lambdas, helicity):
     legend.SetBorderSize(0)
     legend.SetTextSize(0.041)
     legend.SetTextFont(42)
-    legend.AddEntry(median, "Asymptotic expected w/o BinErr",'L')
+    legend.AddEntry(median, "Asymptotic expected limit",'L')
     #legend.AddEntry(green, "#pm 1 std. deviation",'f')
     #legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
-    legend.AddEntry(err_median, "Asymptotic expected with BinErr", "L")
-    legend.AddEntry(mcmc, "MarkovChainMC expected w/o BinErr",'L')
-    legend.AddEntry(err_mcmc, "MarkovChainMC expexted with BinErr", "L")
+    legend.AddEntry(mcmc, "MarkovChainMC expected limit",'L')
     legend.Draw()
 
-    c.SaveAs("%slimits/%sLimit_ee_LimitMCMCVsMmin%s.png"%(model, model, helicity))
+    c.SaveAs("%slimits/%sLimit_ee_LimitVsMmin%s_VSMCMC.png"%(model, model, helicity))
     c.Close()
 
  
@@ -269,14 +404,15 @@ def main(argv):
     
     model = argv[0]
     if model == "ADD":
-        lambdas = [5000, 6000, 7000, 8000, 9000, 10000]
+        lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
         heli = [""]
     else:
         lambdas = [16, 22, 28, 32, 40]
         heli = ["_ConLL", "_ConLR", "_ConRR"] #, "_DesLL", "_DesLR", "_DesRR"]
 
     for helicity in heli:
-        plotLimits(model, lambdas, helicity)
+        plotLimitsASMCMC(model, lambdas, helicity)
+        #plotLimitsASERR(model, lambdas, helicity) # NEVER use this function again
  
 if __name__ == '__main__':
     main(sys.argv[1:])

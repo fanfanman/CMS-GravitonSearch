@@ -1,0 +1,571 @@
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 880303110
+Generate toy 1/1
+Done in 67.05 min (cpu), 67.40 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 1
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 558285199
+Generate toy 1/1
+Done in 64.52 min (cpu), 64.82 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 2
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1123000217
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 4.86268 +/- 1.89217 @ 95% CL (22 tries)
+Done in 46.79 min (cpu), 46.96 min (real)
+mean   expected limit: r < 4.86268 @ 95%CL (1 toyMC)
+median expected limit: r < 4.86268 @ 95%CL (1 toyMC)
+   68% expected band : 4.86268 < r < 4.86268
+   95% expected band : 4.86268 < r < 4.86268
+>>>> Finished computing CI MCMC with Lambda = 3
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1611034265
+Generate toy 1/1
+Done in 57.75 min (cpu), 57.92 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 4
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1665111333
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.12045 +/- 0.0152124 @ 95% CL (2 tries)
+Done in 54.66 min (cpu), 54.81 min (real)
+mean   expected limit: r < 0.12045 @ 95%CL (1 toyMC)
+median expected limit: r < 0.12045 @ 95%CL (1 toyMC)
+   68% expected band : 0.12045 < r < 0.12045
+   95% expected band : 0.12045 < r < 0.12045
+>>>> Finished computing CI MCMC with Lambda = 5
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 551938546
+Generate toy 1/1
+Done in 55.47 min (cpu), 55.66 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 6
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1385454959
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.146519 +/- 0.00475616 @ 95% CL (83 tries)
+Done in 12.72 min (cpu), 12.75 min (real)
+mean   expected limit: r < 0.146519 @ 95%CL (1 toyMC)
+median expected limit: r < 0.146519 @ 95%CL (1 toyMC)
+   68% expected band : 0.146519 < r < 0.146519
+   95% expected band : 0.146519 < r < 0.146519
+>>>> Finished computing CI MCMC with Lambda = 7
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1893138410
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.220531 +/- 0.00224592 @ 95% CL (100 tries)
+Done in 1.42 min (cpu), 1.42 min (real)
+mean   expected limit: r < 0.220531 @ 95%CL (1 toyMC)
+median expected limit: r < 0.220531 @ 95%CL (1 toyMC)
+   68% expected band : 0.220531 < r < 0.220531
+   95% expected band : 0.220531 < r < 0.220531
+>>>> Finished computing CI MCMC with Lambda = 8
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -508691638
+Generate toy 1/1
+Done in 52.07 min (cpu), 52.21 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 9
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1314435308
+Generate toy 1/1
+Done in 49.91 min (cpu), 50.02 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 10
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -650817347
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.165271 +/- 0.00242314 @ 95% CL (99 tries)
+Done in 2.09 min (cpu), 2.10 min (real)
+mean   expected limit: r < 0.165271 @ 95%CL (1 toyMC)
+median expected limit: r < 0.165271 @ 95%CL (1 toyMC)
+   68% expected band : 0.165271 < r < 0.165271
+   95% expected band : 0.165271 < r < 0.165271
+>>>> Finished computing CI MCMC with Lambda = 11
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1173798792
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.14512 +/- 0.0068077 @ 95% CL (64 tries)
+Done in 19.30 min (cpu), 19.35 min (real)
+mean   expected limit: r < 0.14512 @ 95%CL (1 toyMC)
+median expected limit: r < 0.14512 @ 95%CL (1 toyMC)
+   68% expected band : 0.14512 < r < 0.14512
+   95% expected band : 0.14512 < r < 0.14512
+>>>> Finished computing CI MCMC with Lambda = 12
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1472767325
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.18829 +/- 0.00265989 @ 95% CL (100 tries)
+Done in 1.44 min (cpu), 1.45 min (real)
+mean   expected limit: r < 0.18829 @ 95%CL (1 toyMC)
+median expected limit: r < 0.18829 @ 95%CL (1 toyMC)
+   68% expected band : 0.18829 < r < 0.18829
+   95% expected band : 0.18829 < r < 0.18829
+>>>> Finished computing CI MCMC with Lambda = 13
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1367929694
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 10.0613 +/- 4.44471 @ 95% CL (6 tries)
+Done in 51.88 min (cpu), 52.01 min (real)
+mean   expected limit: r < 10.0613 @ 95%CL (1 toyMC)
+median expected limit: r < 10.0613 @ 95%CL (1 toyMC)
+   68% expected band : 10.0613 < r < 10.0613
+   95% expected band : 10.0613 < r < 10.0613
+>>>> Finished computing CI MCMC with Lambda = 14
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -62227232
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 8.26018 +/- 2.1316 @ 95% CL (22 tries)
+Done in 43.55 min (cpu), 43.68 min (real)
+mean   expected limit: r < 8.26018 @ 95%CL (1 toyMC)
+median expected limit: r < 8.26018 @ 95%CL (1 toyMC)
+   68% expected band : 8.26018 < r < 8.26018
+   95% expected band : 8.26018 < r < 8.26018
+>>>> Finished computing CI MCMC with Lambda = 15
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -2122291684
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.142061 +/- 0.00445263 @ 95% CL (76 tries)
+Done in 14.12 min (cpu), 14.17 min (real)
+mean   expected limit: r < 0.142061 @ 95%CL (1 toyMC)
+median expected limit: r < 0.142061 @ 95%CL (1 toyMC)
+   68% expected band : 0.142061 < r < 0.142061
+   95% expected band : 0.142061 < r < 0.142061
+>>>> Finished computing CI MCMC with Lambda = 16
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -221373274
+Generate toy 1/1
+Done in 51.26 min (cpu), 51.41 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 17
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1150712028
+Generate toy 1/1
+Done in 50.49 min (cpu), 50.64 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 18
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1666573782
+Generate toy 1/1
+Done in 52.08 min (cpu), 52.22 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 19
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1236652841
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 20 @ 95% CL
+Done in 50.51 min (cpu), 50.62 min (real)
+mean   expected limit: r < 20 @ 95%CL (1 toyMC)
+median expected limit: r < 20 @ 95%CL (1 toyMC)
+   68% expected band : 20 < r < 20
+   95% expected band : 20 < r < 20
+>>>> Finished computing CI MCMC with Lambda = 20
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1597093362
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.184031 +/- 0.00207176 @ 95% CL (100 tries)
+Done in 1.41 min (cpu), 1.41 min (real)
+mean   expected limit: r < 0.184031 @ 95%CL (1 toyMC)
+median expected limit: r < 0.184031 @ 95%CL (1 toyMC)
+   68% expected band : 0.184031 < r < 0.184031
+   95% expected band : 0.184031 < r < 0.184031
+>>>> Finished computing CI MCMC with Lambda = 21
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 670492861
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 20 +/- 0 @ 95% CL (2 tries)
+Done in 53.10 min (cpu), 53.22 min (real)
+mean   expected limit: r < 20 @ 95%CL (1 toyMC)
+median expected limit: r < 20 @ 95%CL (1 toyMC)
+   68% expected band : 20 < r < 20
+   95% expected band : 20 < r < 20
+>>>> Finished computing CI MCMC with Lambda = 22
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 533295249
+Generate toy 1/1
+Done in 56.22 min (cpu), 56.29 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 23
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 60236072
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.114917 +/- 0.00968982 @ 95% CL (18 tries)
+Done in 52.22 min (cpu), 52.29 min (real)
+mean   expected limit: r < 0.114917 @ 95%CL (1 toyMC)
+median expected limit: r < 0.114917 @ 95%CL (1 toyMC)
+   68% expected band : 0.114917 < r < 0.114917
+   95% expected band : 0.114917 < r < 0.114917
+>>>> Finished computing CI MCMC with Lambda = 24
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 483139758
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 5.24006 +/- 1.48931 @ 95% CL (36 tries)
+Done in 33.35 min (cpu), 33.39 min (real)
+mean   expected limit: r < 5.24006 @ 95%CL (1 toyMC)
+median expected limit: r < 5.24006 @ 95%CL (1 toyMC)
+   68% expected band : 5.24006 < r < 5.24006
+   95% expected band : 5.24006 < r < 5.24006
+>>>> Finished computing CI MCMC with Lambda = 25
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 136225503
+Generate toy 1/1
+Done in 50.38 min (cpu), 50.44 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 26
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1451774686
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.183611 +/- 0.00188167 @ 95% CL (100 tries)
+Done in 1.39 min (cpu), 1.39 min (real)
+mean   expected limit: r < 0.183611 @ 95%CL (1 toyMC)
+median expected limit: r < 0.183611 @ 95%CL (1 toyMC)
+   68% expected band : 0.183611 < r < 0.183611
+   95% expected band : 0.183611 < r < 0.183611
+>>>> Finished computing CI MCMC with Lambda = 27
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 91218515
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.148735 +/- 0.00618861 @ 95% CL (78 tries)
+Done in 17.34 min (cpu), 17.37 min (real)
+mean   expected limit: r < 0.148735 @ 95%CL (1 toyMC)
+median expected limit: r < 0.148735 @ 95%CL (1 toyMC)
+   68% expected band : 0.148735 < r < 0.148735
+   95% expected band : 0.148735 < r < 0.148735
+>>>> Finished computing CI MCMC with Lambda = 28
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -666887883
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 6.28484 +/- 1.24836 @ 95% CL (57 tries)
+Done in 32.18 min (cpu), 32.22 min (real)
+mean   expected limit: r < 6.28484 @ 95%CL (1 toyMC)
+median expected limit: r < 6.28484 @ 95%CL (1 toyMC)
+   68% expected band : 6.28484 < r < 6.28484
+   95% expected band : 6.28484 < r < 6.28484
+>>>> Finished computing CI MCMC with Lambda = 29
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1688639420
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.166108 +/- 0.00259701 @ 95% CL (97 tries)
+Done in 2.61 min (cpu), 2.61 min (real)
+mean   expected limit: r < 0.166108 @ 95%CL (1 toyMC)
+median expected limit: r < 0.166108 @ 95%CL (1 toyMC)
+   68% expected band : 0.166108 < r < 0.166108
+   95% expected band : 0.166108 < r < 0.166108
+>>>> Finished computing CI MCMC with Lambda = 30
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 99287722
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 8.52574 +/- 1.9652 @ 95% CL (26 tries)
+Done in 43.97 min (cpu), 44.03 min (real)
+mean   expected limit: r < 8.52574 @ 95%CL (1 toyMC)
+median expected limit: r < 8.52574 @ 95%CL (1 toyMC)
+   68% expected band : 8.52574 < r < 8.52574
+   95% expected band : 8.52574 < r < 8.52574
+>>>> Finished computing CI MCMC with Lambda = 31
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 53152865
+Generate toy 1/1
+Done in 47.20 min (cpu), 47.26 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 32
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -2131337200
+Generate toy 1/1
+Done in 54.66 min (cpu), 54.73 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 33
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 990427935
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 1.66667e+29 +/- 1.66667e+29 @ 95% CL (6 tries)
+Done in 57.67 min (cpu), 57.75 min (real)
+mean   expected limit: r < 1.66667e+29 @ 95%CL (1 toyMC)
+median expected limit: r < 1.66667e+29 @ 95%CL (1 toyMC)
+   68% expected band : 1.66667e+29 < r < 1.66667e+29
+   95% expected band : 1.66667e+29 < r < 1.66667e+29
+>>>> Finished computing CI MCMC with Lambda = 34
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1970865365
+Generate toy 1/1
+Done in 47.73 min (cpu), 47.79 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 35
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1746245661
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 5.03123 +/- 1.06921 @ 95% CL (66 tries)
+Done in 18.35 min (cpu), 18.37 min (real)
+mean   expected limit: r < 5.03123 @ 95%CL (1 toyMC)
+median expected limit: r < 5.03123 @ 95%CL (1 toyMC)
+   68% expected band : 5.03123 < r < 5.03123
+   95% expected band : 5.03123 < r < 5.03123
+>>>> Finished computing CI MCMC with Lambda = 36
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1791520335
+Generate toy 1/1
+Done in 61.52 min (cpu), 61.60 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 37
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -1211052569
+Generate toy 1/1
+Done in 55.72 min (cpu), 55.79 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 38
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1901720655
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 5.17406 +/- 1.13666 @ 95% CL (60 tries)
+Done in 21.70 min (cpu), 21.73 min (real)
+mean   expected limit: r < 5.17406 @ 95%CL (1 toyMC)
+median expected limit: r < 5.17406 @ 95%CL (1 toyMC)
+   68% expected band : 5.17406 < r < 5.17406
+   95% expected band : 5.17406 < r < 5.17406
+>>>> Finished computing CI MCMC with Lambda = 39
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 2113199351
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.162245 +/- 0.0039353 @ 95% CL (90 tries)
+Done in 9.36 min (cpu), 9.38 min (real)
+mean   expected limit: r < 0.162245 @ 95%CL (1 toyMC)
+median expected limit: r < 0.162245 @ 95%CL (1 toyMC)
+   68% expected band : 0.162245 < r < 0.162245
+   95% expected band : 0.162245 < r < 0.162245
+>>>> Finished computing CI MCMC with Lambda = 40
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1154639204
+Generate toy 1/1
+Done in 61.84 min (cpu), 61.91 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 41
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1399813030
+Generate toy 1/1
+Done in 48.27 min (cpu), 48.34 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 42
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1742801700
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.151395 +/- 0.00280275 @ 95% CL (91 tries)
+Done in 5.13 min (cpu), 5.14 min (real)
+mean   expected limit: r < 0.151395 @ 95%CL (1 toyMC)
+median expected limit: r < 0.151395 @ 95%CL (1 toyMC)
+   68% expected band : 0.151395 < r < 0.151395
+   95% expected band : 0.151395 < r < 0.151395
+>>>> Finished computing CI MCMC with Lambda = 43
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -670114444
+Generate toy 1/1
+Done in 55.58 min (cpu), 55.65 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 44
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 809181508
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 5.43264 +/- 1.63125 @ 95% CL (31 tries)
+Done in 42.66 min (cpu), 42.72 min (real)
+mean   expected limit: r < 5.43264 @ 95%CL (1 toyMC)
+median expected limit: r < 5.43264 @ 95%CL (1 toyMC)
+   68% expected band : 5.43264 < r < 5.43264
+   95% expected band : 5.43264 < r < 5.43264
+>>>> Finished computing CI MCMC with Lambda = 45
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 1637013070
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.167546 +/- 0.00296181 @ 95% CL (97 tries)
+Done in 2.57 min (cpu), 2.57 min (real)
+mean   expected limit: r < 0.167546 @ 95%CL (1 toyMC)
+median expected limit: r < 0.167546 @ 95%CL (1 toyMC)
+   68% expected band : 0.167546 < r < 0.167546
+   95% expected band : 0.167546 < r < 0.167546
+>>>> Finished computing CI MCMC with Lambda = 46
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -299310468
+Generate toy 1/1
+Done in 46.71 min (cpu), 46.77 min (real)
+mean   expected limit: r < -nan @ 95%CL (0 toyMC)
+>>>> Finished computing CI MCMC with Lambda = 47
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed -2106152566
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.102575 +/- 0.00839433 @ 95% CL (2 tries)
+Done in 59.11 min (cpu), 59.18 min (real)
+mean   expected limit: r < 0.102575 @ 95%CL (1 toyMC)
+median expected limit: r < 0.102575 @ 95%CL (1 toyMC)
+   68% expected band : 0.102575 < r < 0.102575
+   95% expected band : 0.102575 < r < 0.102575
+>>>> Finished computing CI MCMC with Lambda = 48
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 925418264
+Generate toy 1/1
+
+ -- MarkovChainMC -- 
+Limit: r < 0.164484 +/- 0.00392212 @ 95% CL (91 tries)
+Done in 7.26 min (cpu), 7.27 min (real)
+mean   expected limit: r < 0.164484 @ 95%CL (1 toyMC)
+median expected limit: r < 0.164484 @ 95%CL (1 toyMC)
+   68% expected band : 0.164484 < r < 0.164484
+   95% expected band : 0.164484 < r < 0.164484
+>>>> Finished computing CI MCMC with Lambda = 49
+ <<< Combine >>> 
+>>> including systematics
+>>> method used is MarkovChainMC
+>>> Used OpenSSL to get a really random seed 449423395
+Generate toy 1/1

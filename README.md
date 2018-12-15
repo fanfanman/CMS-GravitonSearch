@@ -9,7 +9,7 @@
 - `ADDdataCards/` and `CIdataCards/` store datacards for Combine
 - `ADDlimits/` and `CIlimits/` store measurements of limits and significances for each model
 - `rawDataPlots/` stores raw data distributions, including event kinematics
-- `ADDdataCards_binErr/` and `CIdataCards_binErr/` store datacards with an additional systematic uncertainty from mass
+- `backup/` stores ADD datacards and plots made with interference 
 
 ### Limit study
 Commands to measure the limit of ADD signal: (for CI, replace ADD with CI in cmd)
@@ -67,3 +67,9 @@ The programs will read source data, calculate significances by `combine -M Signi
 ### Update Dec 3rd
 - Added `plotLimitMCMCVsMmin.py` to compare the Limit Vs Mmin for single bin counting experiments, with AsymptoticLimits or MarkovChainMC method, with or without additional binning uncertainty.
 - Found: the performance of MCMC is slightly better than AsymptoticLimits for around 10%, and the variation of limit over Mmin is probably independent of binning uncertainty.
+
+### Update Dec 12th
+- Update: all the systematic uncertainties included in the datacards have been updated to include both luminosity uncer (on signal) and Uncertainty numbers (on signal + background)
+- Have deleted all the former datacards including only one uncertainty
+- Have deleted all the former limit plots which are made from datacards including only one uncertainty (the significance plots remain)
+- Have moved ADD datacards with interference into `backup/` folder

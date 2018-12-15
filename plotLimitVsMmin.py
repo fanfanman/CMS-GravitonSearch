@@ -82,7 +82,9 @@ def getCross(Mmin, model, lambdas, helicity):
 # plot limit vs Mmin
 def plotLimits(model, lambdas, helicity):
 
-    Mmin = [200 + i * 100 for i in range(31)]
+    Mmin = [400 + i * 100 for i in range(29)]
+    if model == "CI": Mmin = [800 + i * 100 for i in range(25)]
+
     N = len(Mmin)
     yellow = TGraph(2*N)    # yellow band
     green = TGraph(2*N)     # green band
@@ -128,8 +130,9 @@ def plotLimits(model, lambdas, helicity):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% limit of signal")
-    frame.GetXaxis().SetTitle("#M_{min} (GeV)")
+    frame.GetYaxis().SetTitle("95% limit of #Lambda_{T}")
+    if model == "CI": frame.GetYaxis().SetTitle("95% limit of #Lambda")
+    frame.GetXaxis().SetTitle("M_{#font[12]{l}#font[12]{l}}^{min} (GeV)")
     #frame.SetMinimum(0)
     #frame.SetMaximum(max(up2s)*1.05)
     #frame.GetXaxis().SetLimits(min(values),max(values))

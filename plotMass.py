@@ -61,7 +61,7 @@ def plotsingle(model, heli, lambdaT):
 	
 	latexCMSlepton = "ee"
 	if isMuon: latexCMSlepton = "#mu#mu"
-	latex.DrawLatex(0.95, 0.96, "36.3 fb^{-1} (13 TeV, %s)"%latexCMSlepton)
+	latex.DrawLatex(0.95, 0.96, "35.9 fb^{-1} (13 TeV, %s)"%latexCMSlepton)
 	cmsExtra = "#splitline{Private Work}{Simulation}"
 	latexCMS.DrawLatex(0.19,0.88,"CMS")
 	if "Simulation" in cmsExtra:
@@ -97,7 +97,7 @@ def plotsingle(model, heli, lambdaT):
 			yMin=0.5,yMax=2.0,ndivisions=10,color=signalHists[0].GetLineColor(),adaptiveBinning=0.25)
 		ratio.draw(gPad,True,False,True,chi2Pos=0.7)
 	else: # model == "CI":
-		ratio = ratios.RatioGraph(signalHists[0], signalHists[3], 120, 7000,title="S+B ConLL / S+B DesLL",
+		ratio = ratios.RatioGraph(signalHists[0], signalHists[3], 120, 7000,title="ConLL / DesLL",
 			yMin=0.5,yMax=2.0,ndivisions=10,color=signalHists[0].GetLineColor(),adaptiveBinning=0.25)
                 ratio.draw(gPad,True,False,True,chi2Pos=0.7)
 
@@ -158,7 +158,7 @@ def plotcombine(model, lambdas, helicity):
 
         latexCMSlepton = "ee"
         if isMuon: latexCMSlepton = "#mu#mu"
-        latex.DrawLatex(0.95, 0.96, "36.3 fb^{-1} (13 TeV, %s)"%latexCMSlepton)
+        latex.DrawLatex(0.95, 0.96, "35.9 fb^{-1} (13 TeV, %s)"%latexCMSlepton)
         cmsExtra = "#splitline{Private Work}{Simulation}"
         latexCMS.DrawLatex(0.19,0.88,"CMS")
         if "Simulation" in cmsExtra:
@@ -202,18 +202,20 @@ def main(argv):
 	
 	if model == "ADD": 
 		lambdas = [4000, 5000, 6000, 7000, 8000, 9000, 10000]
-		heli = ["_Con", "_Des"]
+		#heli = ["_Con", "_Des"]
+		heli = [""]
 	else: 
-		lambdas = [16, 22, 28, 32, 40]
+		#lambdas = [16, 22, 28, 32, 40]
+		lambdas = [16]
 		heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
 
 	# plot spectrum for each single lambda
-	#for lambdaT in lambdas:
-	#	plotsingle(model, heli, lambdaT)
+	for lambdaT in lambdas:
+		plotsingle(model, heli, lambdaT)
 
 	# plot spectrum for each single helicity
-	for helicity in heli:
-		plotcombine(model, lambdas, helicity)
+	#for helicity in heli:
+	#	plotcombine(model, lambdas, helicity)
 
 
 if __name__ == "__main__":

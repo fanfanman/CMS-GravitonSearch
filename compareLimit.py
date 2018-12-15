@@ -33,15 +33,41 @@ def getLimits(file_name):
 # for each TGraph
 def getCross(graph, lambdas):
     
-    for j in range(len(lambdas)-1):
-        x1 = lambdas[j]
-        x2 = lambdas[j+1]
-        if graph.Eval(x1) < 1.0 and graph.Eval(x2) >1.0:
-            y1 = graph.Eval(x1)
-            y2 = graph.Eval(x2)
-            a = (y2-y1)*1.0/(x2-x1)
+    limits = []
+    for lambdaT in lambdas:
+        limits.append(graph.Eval(lambdaT))
+
+    if limits[0] >= 1.0 and limits[1] >= 1.0:
+        y2 = limits[1]
+        y1 = limits[0]
+        x2 = lambdas[1]
+        x1 = lambdas[0]
+        a = (y2 - y1)*1.0 / (x2 - x1)
+        b = y2 - a * x2
+        cross = (1.0 - b) / a
+        return cross
+
+    # y1 = a x1 + b, y2 = a x2 + b
+    for k in range(len(lambdas)-1):
+        if limits[k] <= 1.0 and limits[k+1] >= 1.0:
+            y2 = limits[k+1]
+            y1 = limits[k]
+            x2 = lambdas[k+1]
+            x1 = lambdas[k]
+            a = (y2 - y1)*1.0 / (x2 - x1)
             b = y2 - a * x2
-            return (1-b)/a
+            cross = (1.0 - b) / a
+            return cross
+
+    y2 = limits[-1]
+    y1 = limits[-2]
+    x2 = lambdas[-1]
+    x1 = lambdas[-2]
+    a = (y2 - y1)*1.0 / (x2 - x1)
+    b = y2 - a * x2
+    cross = (1.0 - b) / a
+    return cross
+
 
 
 def getLimitsMCMC(file_name):
@@ -58,6 +84,99 @@ def getLimitsMCMC(file_name):
     return sum(limits)*1.0/len(limits)
 
 
+def compareADDErr(model, lambdas, helicity):
+
+    N = len(lambdas)
+    median0 = TGraph(N) # AsymptoticLimits
+    median1 = TGraph(N) # MarkovChainMC
+
+    for i in range(N):
+        f0 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_paper/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
+        f1 = "./%sdataCards_binErr/ee_limit_multibin_bw400/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
+        limit0 = getLimits(f0)
+        limit1 = getLimits(f1)
+        if model == "ADD":
+            median0.SetPoint(i, lambdas[i]/1000, limit0[2])
+            median1.SetPoint(i, lambdas[i]/1000, limit1[2])
+        else:
+            median0.SetPoint(i, lambdas[i], limit0[2])
+            median1.SetPoint(i, lambdas[i], limit1) # median
+        print "Lambda = %d, Median = %f"%(lambdas[i], limit0[2])
+        print "Lambda = %d, Median = %f"%(lambdas[i], limit1[2])
+
+    W = 800
+    H  = 600
+    T = 0.08*H
+    B = 0.12*H
+    L = 0.12*W
+    R = 0.04*W
+    c = TCanvas("c","c",100,100,W,H)
+    c.SetFillColor(0)
+    c.SetBorderMode(0)
+    c.SetFrameFillStyle(0)
+    c.SetFrameBorderMode(0)
+    c.SetLeftMargin( L/W )
+    c.SetRightMargin( R/W )
+    c.SetTopMargin( T/H )
+    c.SetBottomMargin( B/H )
+    c.SetTickx(0)
+    c.SetTicky(0)
+    c.SetGrid()
+    c.cd()
+    if model == "ADD": frame = c.DrawFrame(4, 0.01, 10, 10)
+    else: frame = c.DrawFrame(16, 0.1, 40, 8)
+    frame.GetYaxis().CenterTitle()
+    frame.GetYaxis().SetTitleSize(0.05)
+    frame.GetXaxis().SetTitleSize(0.05)
+    frame.GetXaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetLabelSize(0.04)
+    frame.GetYaxis().SetTitleOffset(0.9)
+    frame.GetXaxis().SetNdivisions(508)
+    frame.GetYaxis().CenterTitle(True)
+    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
+    if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
+    else: frame.GetXaxis().SetTitle("#Lambda [CI]")
+    frame.SetMinimum(0)
+
+    median0.SetLineColor(1)
+    median0.SetLineWidth(2)
+    median0.SetLineStyle(2)
+    median0.Draw('Lsame') # paper AsymptoticLimits
+
+    median1.SetLineColor(2)
+    median1.SetLineWidth(2)
+    median1.SetLineStyle(2)
+    median1.Draw('Lsame') # paper AS with bin err
+
+    CMS_lumi.CMS_lumi(c,13,11)
+    ROOT.gPad.SetTicks(1,1)
+    frame.Draw('sameaxis')
+
+    x1 = 0.15
+    x2 = x1 + 0.33
+    y2 = 0.84
+    y1 = 0.76
+    legend = TLegend(x1,y1,x2,y2)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
+    legend.SetTextSize(0.041)
+    legend.SetTextFont(42)
+    #legend.SetHeader("mean expected limit of %s"%model)
+    legend.AddEntry(median0, "mean expected limit, Asymptotic w/o binErr", 'L')
+    legend.AddEntry(median1, "mean expected limit, Asymptotic with binErr", "L")
+    legend.Draw()
+
+    # Here print out the limits for a graph
+    if model == "ADD": lambdas = [i/1000 for i in lambdas]
+    n0 = getCross(median0, lambdas)
+    n1 = getCross(median1, lambdas)
+    print n0, n1
+
+    c.SaveAs("%slimits/%sLimit_ee_MultibinCompareBinerr%s_bw400.png"%(model, model, helicity))
+    c.Close()
+
+
+
 # Compare limit of model for two methods:
 # AsymptoticLimits and MarkovChainMC 
 def compareMethod(model, lambdas, helicity):
@@ -67,8 +186,8 @@ def compareMethod(model, lambdas, helicity):
     median1 = TGraph(N) # MarkovChainMC
 
     for i in range(N):
-        f0 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw100/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
-        f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw100/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, lambdas[i], lambdas[i])
+        f0 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw1000/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
+        f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw1000/higgsCombine%d.MarkovChainMC.mH%d.root"%(model, lambdas[i], lambdas[i])
         limit0 = getLimits(f0)
         limit1 = getLimitsMCMC(f1)
         if model == "ADD":
@@ -148,7 +267,7 @@ def compareMethod(model, lambdas, helicity):
     n1 = getCross(median1, lambdas)
     print n0, n1
 
-    c.SaveAs("%slimits/%sLimit_ee_MultibinCompareMethod%s_bw100.png"%(model, model, helicity))
+    c.SaveAs("%slimits/%sLimit_ee_MultibinCompareMethod%s_bw1000.png"%(model, model, helicity))
     c.Close()
 
 
@@ -165,7 +284,7 @@ def compareADDBinning(model, lambdas, helicity):
     
     for i in range(N):
         f0 = "./%sdataCards/ee_limit_min1800/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
-        f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_paper/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
+        f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw400/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
         f2 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_geo/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
         f3 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw1000/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
         f4 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw200/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
@@ -226,8 +345,8 @@ def compareADDBinning(model, lambdas, helicity):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
-    if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
+    frame.GetYaxis().SetTitle("95% CL limit on #sigma / #sigma_{ADD}")
+    if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [ADD]")
     else: frame.GetXaxis().SetTitle("#Lambda [CI]")
     frame.SetMinimum(0)
  
@@ -321,11 +440,11 @@ def compareCIBinning(model, lambdas, helicity):
 
     for i in range(N):
         f0 = "./%sdataCards/ee_limit_min1200%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
-        f1 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin%s_geo/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
-        f2 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin%s_bw1000/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
-        f3 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin%s_bw500/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
-        f4 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin%s_bw200/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
-        f5 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin%s_bw100/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
+        f1 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_geo%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
+        f2 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_bw1000%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
+        f3 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_bw500%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
+        f4 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_bw200%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
+        f5 = "./%sdataCards/ee_multibin_min1200/ee_limit_multibin_bw100%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, helicity, lambdas[i])
         limit0 = getLimits(f0)
         limit1 = getLimits(f1)
         limit2 = getLimits(f2)
@@ -382,7 +501,7 @@ def compareCIBinning(model, lambdas, helicity):
     frame.GetYaxis().SetTitleOffset(0.9)
     frame.GetXaxis().SetNdivisions(508)
     frame.GetYaxis().CenterTitle(True)
-    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{SM}")
+    frame.GetYaxis().SetTitle("95% upper limit on #sigma / #sigma_{CI}")
     if model == "ADD": frame.GetXaxis().SetTitle("#Lambda_{T} [GWM]")
     else: frame.GetXaxis().SetTitle("#Lambda [CI]")
     frame.SetMinimum(0)
@@ -432,7 +551,7 @@ def compareCIBinning(model, lambdas, helicity):
     legend.SetTextFont(42)
     legend.SetHeader("mean expected limit of %s"%model)
     #legend.AddEntry(median1, "paper's binning", 'L')
-    legend.AddEntry(median1, "geometric binning (paper)", 'L')
+    legend.AddEntry(median1, "geometric binning", 'L')
     legend.AddEntry(median0, "linear bw=8800 (singlebin)", "L")
     legend.AddEntry(median2, "linear bw=1000", 'L')
     legend.AddEntry(median3, "linear bw=500", "L")
@@ -466,13 +585,14 @@ def main(argv):
     else:
         lambdas = [16, 22, 28, 32, 40]
         #heli = ["_ConLL", "_ConLR", "_ConRR", "_DesLL", "_DesLR", "_DesRR"]
-    	#heli = ["_ConLL", "_ConLR", "_ConRR"]
-        heli = ["_ConLL"]
+    	heli = ["_ConLL", "_ConLR", "_ConRR"]
+        #heli = ["_ConLL"]
 
     for helicity in heli:
         #if model == "ADD": compareADDBinning(model, lambdas, helicity)
 	#else: compareCIBinning(model, lambdas, helicity)
         compareMethod(model, lambdas, helicity)
+        #compareADDErr(model, lambdas, helicity)
  
  
 if __name__ == '__main__':
