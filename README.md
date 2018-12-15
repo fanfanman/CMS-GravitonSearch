@@ -73,3 +73,6 @@ The programs will read source data, calculate significances by `combine -M Signi
 - Have deleted all the former datacards including only one uncertainty
 - Have deleted all the former limit plots which are made from datacards including only one uncertainty (the significance plots remain)
 - Have moved ADD datacards with interference into `backup/` folder
+
+### Update Dec 14th
+- Have finished remaking all the analysis to include all systematic uncertainties.
