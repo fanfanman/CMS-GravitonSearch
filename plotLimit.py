@@ -41,7 +41,7 @@ def plotUpperLimits(model, lambdas, helicity, Mmin):
     xseclist = [1.0]*N
     
     for i in range(N):
-        file_name = "./%sdataCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, Mmin, helicity, lambdas[i])
+        file_name = "./%sshapeCards/ee_limit_min%d%s/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, Mmin, helicity, lambdas[i])
         limit = getLimits(file_name)
         up2s.append(limit[4])
         if model == "ADD":
@@ -131,10 +131,7 @@ def plotUpperLimits(model, lambdas, helicity, Mmin):
     legend.AddEntry(yellow,"#pm 2 std. deviation",'f')
     legend.Draw()
 
-    if XSec: 
-        c.SaveAs("%slimits/%sLimit_ee_XsecVSLambdaTMin%d%s.png"%(model, model, Mmin, helicity))
-    else: 
-        c.SaveAs("%slimits/%sLimit_ee_SinglebinMin%d%s.png"%(model, model, Mmin, helicity))
+    c.SaveAs("%slimits/%sLimit_ee_ShapeMin%d%s_201678.png"%(model, model, Mmin, helicity))
     c.Close()
 
  

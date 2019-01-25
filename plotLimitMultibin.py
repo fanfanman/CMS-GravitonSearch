@@ -31,11 +31,11 @@ def getLimits(file_name):
 
 # get limit from crossing mu=1
 # for each TGraph
-def getCross(graph, lambdas):
-    
+def getCross(mediangraph, lambdas):
+
     limits = []
     for lambdaT in lambdas:
-        limits.append(graph.Eval(lambdaT))
+        limits.append(mediangraph.Eval(lambdaT))
 
     if limits[0] >= 1.0 and limits[1] >= 1.0:
         y2 = limits[1]
@@ -66,6 +66,50 @@ def getCross(graph, lambdas):
     a = (y2 - y1)*1.0 / (x2 - x1)
     b = y2 - a * x2
     cross = (1.0 - b) / a
+    return cross
+
+
+# get limit from crossing mu=1
+# for each TGraph
+def getCrossAll(limits, lambdas):
+
+    cross = [0.0]*5
+    for j in range(5):
+        crossed = False
+        if limits[0][j] >= 1.0 and limits[1][j] >= 1.0:
+            y2 = limits[1][j]
+            y1 = limits[0][j]
+            x2 = lambdas[1]
+            x1 = lambdas[0]
+            a = (y2 - y1)*1.0 / (x2 - x1)
+            b = y2 - a * x2
+            cross[j] = (1.0 - b) / a
+            crossed = True
+            continue
+
+        #crossed = False
+        # y1 = a x1 + b, y2 = a x2 + b
+        for k in range(len(lambdas)-1):
+            if not crossed and limits[k][j] <= 1.0 and limits[k+1][j] >= 1.0:
+                y2 = limits[k+1][j]
+                y1 = limits[k][j]
+                x2 = lambdas[k+1]
+                x1 = lambdas[k]
+                a = (y2 - y1)*1.0 / (x2 - x1)
+                b = y2 - a * x2
+                cross[j] = (1.0 - b) / a
+                crossed = True
+                continue
+
+        if not crossed:
+            y2 = limits[-1][j]
+            y1 = limits[-2][j]
+            x2 = lambdas[-1]
+            x1 = lambdas[-2]
+            a = (y2 - y1)*1.0 / (x2 - x1)
+            b = y2 - a * x2
+            cross[j] = (1.0 - b) / a
+
     return cross
 
 
@@ -282,6 +326,12 @@ def compareADDBinning(model, lambdas, helicity):
     median4 = TGraph(N) # linear bin, bw = 200
     median5 = TGraph(N) # linear bin, bw = 100
     
+    all0 = []
+    all1 = []
+    all2 = []
+    all3 = []
+    all4 = []
+    all5 = []
     for i in range(N):
         f0 = "./%sdataCards/ee_limit_min1800/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
         f1 = "./%sdataCards/ee_multibin_min1800/ee_limit_multibin_bw400/higgsCombineTest.AsymptoticLimits.mH%d.root"%(model, lambdas[i])
@@ -295,6 +345,12 @@ def compareADDBinning(model, lambdas, helicity):
         limit3 = getLimits(f3)
         limit4 = getLimits(f4)
         limit5 = getLimits(f5)
+        all0.append(limit0)
+        all1.append(limit1)
+        all2.append(limit2)
+        all3.append(limit3)
+        all4.append(limit4)
+        all5.append(limit5)
         if model == "ADD": 
             median0.SetPoint(i, lambdas[i]/1000, limit0[2])
             median1.SetPoint(i, lambdas[i]/1000, limit1[2])
@@ -414,14 +470,19 @@ def compareADDBinning(model, lambdas, helicity):
     legend.Draw()
 
     # Here print out the limits for a graph
-    addlam = [4, 5, 6, 7, 8, 9, 10]
-    n0 = getCross(median0, addlam)
-    n1 = getCross(median1, addlam)
-    n2 = getCross(median2, addlam)
-    n3 = getCross(median3, addlam)
-    n4 = getCross(median4, addlam)
-    n5 = getCross(median5, addlam)
-    print n2, n0, n3, n1, n4, n5
+    addlam = [5, 6, 7, 8, 9, 10]
+    n0 = getCrossAll(all0, addlam)
+    n1 = getCrossAll(all1, addlam)
+    n2 = getCrossAll(all2, addlam)
+    n3 = getCrossAll(all3, addlam)
+    n4 = getCrossAll(all4, addlam)
+    n5 = getCrossAll(all5, addlam)
+    print n2
+    print n0
+    print n3
+    print n1
+    print n4
+    print n5
 
     c.SaveAs("%slimits/%sLimit_ee_MultibinCompareBin.png"%(model, model))
     c.Close()
@@ -589,9 +650,9 @@ def main(argv):
         #heli = ["_ConLL"]
 
     for helicity in heli:
-        #if model == "ADD": compareADDBinning(model, lambdas, helicity)
-	#else: compareCIBinning(model, lambdas, helicity)
-        compareMethod(model, lambdas, helicity)
+        if model == "ADD": compareADDBinning(model, lambdas, helicity)
+	else: compareCIBinning(model, lambdas, helicity)
+        #compareMethod(model, lambdas, helicity)
         #compareADDErr(model, lambdas, helicity)
  
  

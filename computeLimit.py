@@ -46,7 +46,7 @@ from readData import getMassDistroDY, getMassDistro
 # dyYield = DY event yield only
 def writeDatacard(model, sigYield, dyYield, lambdaT, Mmin, label):
 	
-	outDir = "%sdataCards_binErr/ee_limit_min%d%s/"%(model, Mmin, label)
+	outDir = "%sdataCards/ee_limit_min%d%s/"%(model, Mmin, label)
 	if not os.path.exists(outDir):
                 os.makedirs(outDir)
 
@@ -80,7 +80,7 @@ def executeDatacard(model, fname, lambdaT, Mmin, label):
 	retval = p.wait()
 
 	rf = "higgsCombineTest.AsymptoticLimits.mH%d.root"%(lambdaT)
-	mvfile = subprocess.Popen("mv ./%s ./%sdataCards_binErr/ee_limit_min%d%s/%s"%(rf, model, Mmin, label, rf), shell=True)
+	mvfile = subprocess.Popen("mv ./%s ./%sdataCards/ee_limit_min%d%s/%s"%(rf, model, Mmin, label, rf), shell=True)
 	print ">>> file moved"
 	retval = p.wait()
 

@@ -62,7 +62,7 @@ The programs will read source data, calculate significances by `combine -M Signi
 
 ### Update Nov 21st
 - Added `computeLimitMultibin.py` to support multibin analysis
-- Added `compareLimit.py` to compare limits calculated from different binning options, and combine methods, for multibin analysis
+- Added `plotLimitMultibin.py` to compare limits calculated from different binning options, and combine methods, for multibin analysis
 
 ### Update Dec 3rd
 - Added `plotLimitMCMCVsMmin.py` to compare the Limit Vs Mmin for single bin counting experiments, with AsymptoticLimits or MarkovChainMC method, with or without additional binning uncertainty.
@@ -76,3 +76,8 @@ The programs will read source data, calculate significances by `combine -M Signi
 
 ### Update Dec 14th
 - Have finished remaking all the analysis to include all systematic uncertainties.
+
+### Update Jan 25th
+- Have properly applied shape analysis
+- Now switching framework
+- Project DONE.
